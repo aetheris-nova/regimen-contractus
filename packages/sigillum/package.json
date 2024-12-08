@@ -1,0 +1,13 @@
+{
+  "name": "@aetherisnova/sigillum",
+  "private": false,
+  "description": "The Sigillum schema underpins the basic features of the sigillum for each Ordo.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aetheris-nova/regimen-contractus"
+  },
+  "license": "CC0-1.0",
+  "scripts": {
+    "build": "forge build"
+  }
+}
