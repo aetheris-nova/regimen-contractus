@@ -15,6 +15,5 @@ runs:
         node-version: '20.18.0'
         cache: 'pnpm'
     - name: "📦 Install"
-      if: steps.pnpm-cache.outputs.cache-hit != 'true'
       run: pnpm install
       shell: bash
