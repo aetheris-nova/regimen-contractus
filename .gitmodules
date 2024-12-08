@@ -1,0 +1,3 @@
+[submodule "packages/sigillum/lib/forge-std"]
+	path = packages/sigillum/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
