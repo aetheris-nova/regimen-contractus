@@ -2,9 +2,11 @@
 pragma solidity ^0.8.13;
 
 import { Test, console } from 'forge-std/Test.sol';
-import {Sigillum} from '../src/Counter.sol';
 
-contract CounterTest is Test {
+// contracts
+import { Sigillum } from '../src/Sigillum.sol';
+
+contract SigillumTest is Test {
   Sigillum public counter;
 
   function setUp() public {

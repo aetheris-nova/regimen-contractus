@@ -59,4 +59,4 @@ jobs:
     if: contains(needs.get_changed_files.outputs.changed_files, 'packages/sigillum/')
     uses: ./.github/workflows/lint_build_test.yml
     with:
-      package_name: "sigillum"
+      package_name: "@aetherisnova/sigillum"

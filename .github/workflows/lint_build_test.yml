@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       package_name:
-        description: "The directory name of the package."
+        description: "The pnpm package name."
         required: true
         type: string
 
@@ -18,8 +18,7 @@ jobs:
       - name: "🔧 Setup"
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "👕 Lint"
-        run: pnpm lint
-        working-directory: packages/${{ inputs.package_name }}
+        run: pnpm -F ${{ inputs.package_name }} run lint
 
   build:
     name: "Build"
@@ -34,8 +33,7 @@ jobs:
       - name: "🔧 Setup Node"
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🏗️ Build"
-        run: pnpm build
-        working-directory: packages/${{ inputs.package_name }}
+        run: pnpm -F ${{ inputs.package_name }} run build
 
   test:
     name: "Test"
@@ -50,5 +48,4 @@ jobs:
       - name: "🔧 Setup Node"
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🧪 Test"
-        run: pnpm test
-        working-directory: packages/${{ inputs.package_name }}
+        run: pnpm -F ${{ inputs.package_name }} run test
