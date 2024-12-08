@@ -1,0 +1,26 @@
+name: "Use pnpm Dependencies"
+
+description: "Checks if the pnpm dependencies have been cached with the hash of the pnpm-lock.yaml file."
+
+runs:
+  using: "composite"
+  steps:
+    - name: "🔧 Setup"
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.18.0'
+    - name: "💾 Cache dependencies"
+      uses: actions/cache@v4
+      id: pnpm-cache
+      with:
+        path: |
+          node_modules
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          ${{ runner.os }}-pnpm-
+          ${{ runner.os }}-
+    - name: "📦 Install"
+      if: steps.pnpm-cache.outputs.cache-hit != 'true'
+      run: pnpm install
+      shell: bash
