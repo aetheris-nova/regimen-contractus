@@ -7,20 +7,12 @@ import { Test, console } from 'forge-std/Test.sol';
 import { Sigillum } from '../src/Sigillum.sol';
 
 contract SigillumTest is Test {
-  Sigillum public counter;
+  Sigillum public token;
 
   function setUp() public {
-    counter = new Sigillum();
-    counter.setNumber(0);
-  }
-
-  function test_Increment() public {
-    counter.increment();
-    assertEq(counter.number(), 1);
-  }
-
-  function testFuzz_SetNumber(uint256 x) public {
-    counter.setNumber(x);
-    assertEq(counter.number(), x);
+    token = new Sigillum(
+      "Sigillum Ordo Administratorum",
+      "SOA"
+    );
   }
 }

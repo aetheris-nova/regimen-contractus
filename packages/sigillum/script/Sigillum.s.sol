@@ -7,14 +7,17 @@ import { Script, console } from 'forge-std/Script.sol';
 import { Sigillum } from '../src/Sigillum.sol';
 
 contract CounterScript is Script {
-  Sigillum public counter;
+  Sigillum public token;
 
   function setUp() public {}
 
   function run() public {
     vm.startBroadcast();
 
-    counter = new Sigillum();
+    token = new Sigillum(
+      "Sigillum Ordo Administratorum",
+      "SOA"
+    );
 
     vm.stopBroadcast();
   }
