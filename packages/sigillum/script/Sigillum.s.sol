@@ -2,17 +2,19 @@
 pragma solidity ^0.8.13;
 
 import { Script, console } from 'forge-std/Script.sol';
-import { Counter } from '../src/Counter.sol';
+
+// contracts
+import { Sigillum } from '../src/Sigillum.sol';
 
 contract CounterScript is Script {
-  Counter public counter;
+  Sigillum public counter;
 
   function setUp() public {}
 
   function run() public {
     vm.startBroadcast();
 
-    counter = new Counter();
+    counter = new Sigillum();
 
     vm.stopBroadcast();
   }
