@@ -8,6 +8,13 @@
   },
   "license": "CC0-1.0",
   "scripts": {
-    "build": "forge build"
+    "build": "forge build",
+    "clean": "forge clean && shx rm -rf src/**/codegen",
+    "lint": "solhint --config .solhint.json \"src/**/*.sol\" --fix",
+    "prettier": "prettier --write \"**/*.sol\""
+  },
+  "devDependencies": {
+    "prettier-plugin-solidity": "^1.4.1",
+    "solhint": "^5.0.3"
   }
 }
