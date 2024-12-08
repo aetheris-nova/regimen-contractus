@@ -277,3 +277,13 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### Foundry
+
+# Compiler files
+cache/
+out/
+
+# Ignores development broadcast logs
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
