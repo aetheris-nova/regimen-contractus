@@ -12,7 +12,7 @@
     "clean": "forge clean && shx rm -rf src/**/codegen",
     "lint": "solhint --config .solhint.json \"src/**/*.sol\"",
     "prettier": "prettier --write \"**/*.sol\"",
-    "test": "exit 0"
+    "test": "forge test"
   },
   "devDependencies": {
     "prettier-plugin-solidity": "^1.4.1",
