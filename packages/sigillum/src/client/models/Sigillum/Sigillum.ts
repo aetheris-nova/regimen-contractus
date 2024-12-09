@@ -1,3 +1,5 @@
+import type { ILogger } from '@aetherisnova/types';
+import { createLogger } from '@aetherisnova/utils';
 import { Wallet } from 'ethers';
 
 // artifacts
@@ -10,9 +12,11 @@ import type { IDeployOptions, INewOptions } from './types';
 
 export default class Sigillum {
   protected _contractAddress: string;
+  protected readonly _logger: ILogger;
 
   private constructor({ contractAddress }: INewOptions) {
     this._contractAddress = contractAddress;
+    this._logger = createLogger();
   }
 
   /**
