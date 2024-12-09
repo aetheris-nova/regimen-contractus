@@ -7,15 +7,42 @@
     "url": "https://github.com/aetheris-nova/regimen-contractus"
   },
   "license": "CC0-1.0",
+  "type": "module",
+  "main": "dist/client/index.js",
+  "types": "dist/client/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "forge build",
-    "clean": "forge clean && shx rm -rf src/**/codegen",
+    "build:client": "pnpm run clean:client && vite build",
+    "build:contracts": "forge build",
+    "clean:client": "shx rm -rf dist/client && shx rm -rf tsconfig.tsbuildinfo",
+    "clean:contracts": "forge clean && shx rm -rf src/**/codegen",
     "lint": "solhint --config .solhint.json \"src/**/*.sol\"",
     "prettier": "prettier --write \"**/*.sol\"",
-    "test": "forge test"
+    "test:client": "jest",
+    "test:contracts": "forge test"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "ethers": "^6.13.4",
+    "jest": "^29.7.0",
     "prettier-plugin-solidity": "^1.4.1",
-    "solhint": "^5.0.3"
+    "solhint": "^5.0.3",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "peerDependencies": {
+    "ethers": "^6.13.4"
   }
 }

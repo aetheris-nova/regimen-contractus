@@ -5,7 +5,7 @@ import { Test } from "forge-std/Test.sol";
 import { Base64 } from "openzeppelin-contracts/contracts/utils/Base64.sol";
 
 // contracts
-import { Sigillum, OwnerAlreadyHasToken } from '../src/Sigillum.sol';
+import { Sigillum, OwnerAlreadyHasToken } from "../src/contracts/Sigillum.sol";
 
 contract SigillumTest is Test {
   Sigillum public token;

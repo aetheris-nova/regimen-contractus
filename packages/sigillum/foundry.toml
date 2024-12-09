@@ -4,9 +4,6 @@ extra_output_files = [
   "evm.bytecode"
 ]
 libs = ["lib"]
-out = "out"
+out = "dist/contracts"
 solc = "0.8.24"
-src = "src"
-
-[profile.local]
-eth_rpc_url = "http://127.0.0.1:8546" # local anvil instance
+src = "src/contracts"
