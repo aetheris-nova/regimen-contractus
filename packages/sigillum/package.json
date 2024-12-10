@@ -19,8 +19,7 @@
     "clean:client": "shx rm -rf dist/client && shx rm -rf tsconfig.tsbuildinfo",
     "clean:contracts": "forge clean && shx rm -rf src/**/codegen",
     "lint": "solhint --config .solhint.json \"src/**/*.sol\"",
-    "postinstall": "pnpm -F @aetherisnova/types run build && pnpm -F @aetherisnova/utils run build",
-    "prettier": "prettier --write \"**/*.sol\"",
+    "prettier": "prettier --write \"**/*.{js,json,sol,ts}\"",
     "test:client": "jest",
     "test:contracts": "forge test"
   },
