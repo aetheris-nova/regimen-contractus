@@ -16,7 +16,7 @@
   "scripts": {
     "build": "pnpm build:contracts && pnpm build:client",
     "build:client": "pnpm run clean:client && vite build",
-    "build:contracts": "forge build",
+    "build:contracts": "pnpm clean:contracts && forge build",
     "clean": "shx rm -rf dist/client && shx rm -rf tsconfig.*.tsbuildinfo",
     "clean:client": "shx rm -rf dist/client && shx rm -rf tsconfig.*.tsbuildinfo",
     "clean:contracts": "forge clean && shx rm -rf src/**/codegen",

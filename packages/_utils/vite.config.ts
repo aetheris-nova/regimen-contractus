@@ -13,7 +13,7 @@ export default mergeConfig(
         formats: ['es'],
         fileName: 'index',
       },
-      outDir: 'dist/client',
+      outDir: 'dist',
     },
     plugins: [
       dts({

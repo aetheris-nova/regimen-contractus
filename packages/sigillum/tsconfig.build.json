@@ -4,8 +4,8 @@
     "declarationMap": true,
     "lib": ["ESNext"],
     "moduleResolution": "Bundler",
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "dist/client",
+    "rootDir": "src/client",
     "sourceMap": true
   },
   "include": ["src/**/*"]
