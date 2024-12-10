@@ -43,6 +43,7 @@ export default class Sigillum {
     name,
     provider,
     silent = false,
+    signerAddress,
     symbol,
   }: IDeployOptions): Promise<Sigillum> {
     const _functionName = 'deploy';
@@ -54,7 +55,7 @@ export default class Sigillum {
     let signer: Signer;
 
     try {
-      signer = await provider.getSigner();
+      signer = await provider.getSigner(signerAddress);
       creatorAddress = await signer.getAddress();
       contractFactory = new ContractFactory(artifact.abi, artifact.bytecode, signer);
       contract = (await contractFactory.deploy(name, symbol, description)) as ISigillumContract;
@@ -81,10 +82,16 @@ export default class Sigillum {
     }
   }
 
-  public static init({ debug = false, address, provider, silent = false }: IInitOptions): Sigillum {
+  public static async init({
+    debug = false,
+    address,
+    provider,
+    signerAddress,
+    silent = false,
+  }: IInitOptions): Promise<Sigillum> {
     return new Sigillum({
       address,
-      contract: new BaseContract(address, artifact.abi, provider) as ISigillumContract,
+      contract: new BaseContract(address, artifact.abi, await provider.getSigner(signerAddress)) as ISigillumContract,
       debug,
       logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
     });
@@ -103,6 +110,12 @@ export default class Sigillum {
     return this._address;
   }
 
+  /**
+   * Burns the token by the ID.
+   * @param {bigint} id - The ID of the token.
+   * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
+   * @public
+   */
   public async burn(id: bigint): Promise<IStateChangeResult<null>> {
     const _functionName = 'burn';
     let response: ContractTransactionResponse;
@@ -215,6 +228,11 @@ export default class Sigillum {
     }
   }
 
+  /**
+   * Gets the current total supply of tokens.
+   * @returns {Promise<bigint>} A promise that resolves to the current total supply of tokens.
+   * @public
+   */
   public async supply(): Promise<bigint> {
     const _functionName = 'supply';
 

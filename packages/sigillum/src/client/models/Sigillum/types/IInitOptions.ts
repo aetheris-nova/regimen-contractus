@@ -10,6 +10,7 @@ import type IBaseOptions from './IBaseOptions';
 interface IInitOptions extends IBaseOptions {
   address: string;
   provider: JsonRpcProvider;
+  signerAddress?: string;
 }
 
 export default IInitOptions;

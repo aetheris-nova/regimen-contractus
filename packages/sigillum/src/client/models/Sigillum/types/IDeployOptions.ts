@@ -7,6 +7,7 @@ interface IDeployOptions extends IBaseOptions {
   description: string;
   name: string;
   provider: JsonRpcProvider;
+  signerAddress?: string;
   symbol: string;
 }
 
