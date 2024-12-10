@@ -1,8 +1,17 @@
-import type { ILogger } from '_types';
+import type { ILogger, IStateChangeResult } from '_types';
 import { createLogger } from '_utils';
 import { decode as decodeBase64 } from '@stablelib/base64';
 import { decode as decodeUTF8 } from '@stablelib/utf8';
-import { BaseContract, ContractFactory, type ContractTransactionResponse, Signer } from 'ethers';
+import {
+  BaseContract,
+  ContractFactory,
+  ContractTransactionReceipt,
+  type ContractTransactionResponse,
+  Interface,
+  LogDescription,
+  Signer,
+  makeError,
+} from 'ethers';
 
 // artifacts
 import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
@@ -32,11 +41,12 @@ export default class Sigillum {
     debug = false,
     description,
     name,
-    symbol,
     provider,
+    silent = false,
+    symbol,
   }: IDeployOptions): Promise<Sigillum> {
     const _functionName = 'deploy';
-    const logger = createLogger();
+    const logger = createLogger(debug ? 'debug' : silent ? 'silent' : 'error');
     let contract: ISigillumContract;
     let contractFactory: ContractFactory;
     let creatorAddress: string;
@@ -71,12 +81,12 @@ export default class Sigillum {
     }
   }
 
-  public static init({ debug = false, address, provider }: IInitOptions): Sigillum {
+  public static init({ debug = false, address, provider, silent = false }: IInitOptions): Sigillum {
     return new Sigillum({
       address,
       contract: new BaseContract(address, artifact.abi, provider) as ISigillumContract,
       debug,
-      logger: createLogger(),
+      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
     });
   }
 
@@ -84,10 +94,45 @@ export default class Sigillum {
    * public methods
    */
 
+  /**
+   * Gets the contract's address.
+   * @returns {string} The contract address.
+   * @public
+   */
   public address(): string {
     return this._address;
   }
 
+  public async burn(id: bigint): Promise<IStateChangeResult<null>> {
+    const _functionName = 'burn';
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.burn(id);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: null,
+        transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the contract URI. This will be in the format of a base64 encoded data URI.
+   * @returns {Promise<string>} A promise that resolves the contract URI.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/URI/Schemes/data}
+   * @public
+   */
   public async contractURI(): Promise<string> {
     const _functionName = 'contractURI';
 
@@ -100,7 +145,12 @@ export default class Sigillum {
     }
   }
 
-  public async contractMetadata(): Promise<IContractMetadata> {
+  /**
+   * Gets the contract metadata as a JSON.
+   * @returns {Promise<IContractMetadata>} A promise that resolves to the contract metadata.
+   * @public
+   */
+  public async contractMetadata<Result = IContractMetadata>(): Promise<Result> {
     const _functionName = 'contractMetadata';
 
     try {
@@ -115,6 +165,75 @@ export default class Sigillum {
     }
   }
 
+  /**
+   * Mints a new token to the recipient.
+   * @param {string} recipient - The address of the recipient.
+   * @returns {Promise<IStateChangeResult<bigint>>} A promise that resolves to the transaction and the new token ID.
+   */
+  public async mint(recipient: string): Promise<IStateChangeResult<bigint>> {
+    const _functionName = 'mint';
+    let contractInterface: Interface;
+    let log: LogDescription | null;
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.mint(recipient);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      contractInterface = new Interface(artifact.abi);
+      log = receipt.logs.reduce((acc, value) => {
+        try {
+          const parsedLog = contractInterface.parseLog(value);
+
+          if (parsedLog?.name === 'Transfer') {
+            return parsedLog;
+          }
+
+          return acc;
+        } catch (error) {
+          return acc;
+        }
+      }, null);
+
+      if (!log) {
+        throw makeError('failed to parse transfer event log', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: log.args[2], // Transfer(address,address,uint256)
+        transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  public async supply(): Promise<bigint> {
+    const _functionName = 'supply';
+
+    try {
+      return await this._contract.supply();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the token URI. This will be in the format of a base64 encoded data URI.
+   * @param {bigint} id - The token ID.
+   * @returns {Promise<string>} A promise that resolves the token URI.
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/URI/Schemes/data}
+   * @public
+   */
   public async tokenURI(id: bigint): Promise<string> {
     const _functionName = 'tokenURI';
 

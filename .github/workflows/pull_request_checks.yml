@@ -60,6 +60,7 @@ jobs:
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "@aetherisnova/sigillum"
+      with_foundry: true
 
   lint_build_test_types:
     name: "Lint, Build & Test - _types"

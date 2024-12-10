@@ -29,8 +29,9 @@ function main(): void {
     }
   }
 
-  // add all types
-  exports.push(`export * from './types;'`);
+  // add miscellaneous
+  exports.push(`export * from './constants';`);
+  exports.push(`export * from './types';`);
 
   indexFilePath = join(srcDir, 'index.ts');
 

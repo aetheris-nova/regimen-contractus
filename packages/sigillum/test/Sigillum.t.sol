@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.20;
 
-import { Test } from "forge-std/Test.sol";
-import { Base64 } from "openzeppelin-contracts/contracts/utils/Base64.sol";
+import { Test } from 'forge-std/Test.sol';
+import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
 
 // contracts
-import { Sigillum, OwnerAlreadyHasToken } from "../src/contracts/Sigillum.sol";
+import { Sigillum } from '../src/contracts/Sigillum.sol';
 
 contract SigillumTest is Test {
   Sigillum public token;
 
   function setUp() public {
     token = new Sigillum(
-      "Sigillum Ordo Administratorum",
-      "SOA",
-      "The Sigillum that proves membership to the Ordo Administratorum."
+      'Sigillum Ordo Administratorum',
+      'SOA',
+      'The Sigillum that proves membership to the Ordo Administratorum.'
     );
   }
 
@@ -43,7 +43,7 @@ contract SigillumTest is Test {
     token.mint(address(1));
 
     // assert
-    vm.expectRevert(OwnerAlreadyHasToken.selector);
+    vm.expectRevert('RECIPIENT_ALREADY_HAS_TOKEN');
 
     // act
     token.mint(address(1));

@@ -6,9 +6,6 @@ import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
 import { Strings } from 'openzeppelin-contracts/contracts/utils/Strings.sol';
 import { ERC721 } from 'solmate/tokens/ERC721.sol';
 
-error TokenDoesNotExist();
-error OwnerAlreadyHasToken();
-
 contract Sigillum is ERC721, AccessControl {
   // roles
   bytes32 public constant ISSUER_ROLE = keccak256('ISSUER_ROLE');
@@ -26,7 +23,11 @@ contract Sigillum is ERC721, AccessControl {
   }
 
   function burn(uint256 id) public onlyRole(ISSUER_ROLE) {
+    require(_ownerOf[id] != address(0), 'TOKEN_DOES_NOT_EXIST');
+
     _burn(id);
+
+    supply = supply - 1;
   }
 
   function contractURI() external view returns (string memory) {
@@ -56,9 +57,7 @@ contract Sigillum is ERC721, AccessControl {
   function mint(address recipient) public onlyRole(ISSUER_ROLE) returns (uint256) {
     uint256 newItemId;
 
-    if (balanceOf(recipient) > 0) {
-      revert OwnerAlreadyHasToken();
-    }
+    require(balanceOf(recipient) == 0, 'RECIPIENT_ALREADY_HAS_TOKEN');
 
     newItemId = currentTokenID + 1;
 
@@ -71,9 +70,7 @@ contract Sigillum is ERC721, AccessControl {
   }
 
   function tokenURI(uint256 id) public view virtual override returns (string memory) {
-    if (ownerOf(id) == address(0)) {
-      revert TokenDoesNotExist();
-    }
+    require(_ownerOf[id] != address(0), 'TOKEN_DOES_NOT_EXIST');
 
     return
       string(

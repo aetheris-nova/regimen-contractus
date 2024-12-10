@@ -15,8 +15,10 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "paths": {
+      "@client/constants": ["src/client/constants"],
       "@client/models/*": ["src/client/models/*"],
       "@client/types": ["src/client/types"],
+
       "@dist/*": ["dist/*"]
     },
     "removeComments": false,
