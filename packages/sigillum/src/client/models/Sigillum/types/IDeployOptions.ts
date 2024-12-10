@@ -1,9 +1,11 @@
 import type { JsonRpcProvider } from 'ethers';
 
-interface IDeployOptions {
+// types
+import type IBaseOptions from './IBaseOptions';
+
+interface IDeployOptions extends IBaseOptions {
   description: string;
   name: string;
-  privateKey: string;
   provider: JsonRpcProvider;
   symbol: string;
 }

@@ -23,7 +23,7 @@ export default [
     },
   },
   {
-    ignores: ['dist/', 'node_modules/'],
+    ignores: ['cache/', 'dist/', 'node_modules/', 'lib/'],
   },
   {
     rules: {

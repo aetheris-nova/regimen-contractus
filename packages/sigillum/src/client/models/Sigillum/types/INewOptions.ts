@@ -1,7 +1,13 @@
-import type { Signer } from 'ethers';
+import type { ILogger } from '_types';
+import type { BaseContract } from 'ethers';
 
-interface INewOptions {
-  contractAddress: string;
+// types
+import type IBaseOptions from './IBaseOptions';
+
+interface INewOptions extends IBaseOptions {
+  address: string;
+  contract: BaseContract;
+  logger: ILogger;
 }
 
 export default INewOptions;

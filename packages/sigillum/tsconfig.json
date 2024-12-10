@@ -15,7 +15,8 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "paths": {
-      "@client": ["src"]
+      "@client": ["src/client"],
+      "@dist/*": ["dist/*"]
     },
     "removeComments": false,
     "resolveJsonModule": true,
