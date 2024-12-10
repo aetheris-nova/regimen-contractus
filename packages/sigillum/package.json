@@ -26,10 +26,12 @@
     "lint:contracts": "solhint --config .solhint.json \"src/**/*.sol\"",
     "prettier": "prettier --write \"**/*.{js,json,sol,ts}\"",
     "test": "pnpm test:contracts && pnpm test:client",
-    "test:client": "vitest run --config vitest.config.ts",
+    "test:client": "pnpm build:contracts && vitest run --config vitest.config.ts",
     "test:contracts": "forge test"
   },
   "dependencies": {
+    "@stablelib/base64": "^2.0.0",
+    "@stablelib/utf8": "^2.0.0",
     "_types": "workspace:^",
     "_utils": "workspace:^"
   },

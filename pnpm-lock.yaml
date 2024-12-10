@@ -132,6 +132,12 @@ importers:
 
   packages/sigillum:
     dependencies:
+      '@stablelib/base64':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@stablelib/utf8':
+        specifier: ^2.0.0
+        version: 2.0.0
       _types:
         specifier: workspace:^
         version: link:../_types
@@ -1056,6 +1062,12 @@ packages:
 
   '@solidity-parser/parser@0.18.0':
     resolution: {integrity: sha512-yfORGUIPgLck41qyN7nbwJRAx17/jAIXCTanHOJZhB6PJ1iAk/84b/xlsVKFSyNyLXIj0dhppoE0+CRws7wlzA==}
+
+  '@stablelib/base64@2.0.0':
+    resolution: {integrity: sha512-ffSfySa1ZpZYzM5FQ2xILQ2jifQ+GlgbDJzRTCtaB0sqta88KYghB/tlSV2VS2iHRCvMdUvJlLOW1rmSkziWnw==}
+
+  '@stablelib/utf8@2.0.0':
+    resolution: {integrity: sha512-bHaUduwFKYgj6rRvA5udyyg+ASx6gJZiQaXvfBHb7A2r+X9tRIKJ/VmpQKFQnEMInpBTh7jJLy+Gt99GH9YZ9g==}
 
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
@@ -4193,6 +4205,10 @@ snapshots:
   '@sindresorhus/merge-streams@4.0.0': {}
 
   '@solidity-parser/parser@0.18.0': {}
+
+  '@stablelib/base64@2.0.0': {}
+
+  '@stablelib/utf8@2.0.0': {}
 
   '@szmarczak/http-timer@5.0.1':
     dependencies:

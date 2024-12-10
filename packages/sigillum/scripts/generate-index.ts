@@ -29,6 +29,9 @@ function main(): void {
     }
   }
 
+  // add all types
+  exports.push(`export * from './types;'`);
+
   indexFilePath = join(srcDir, 'index.ts');
 
   // write to index file

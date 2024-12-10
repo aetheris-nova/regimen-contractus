@@ -15,7 +15,8 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "paths": {
-      "@client": ["src/client"],
+      "@client/models/*": ["src/client/models/*"],
+      "@client/types": ["src/client/types"],
       "@dist/*": ["dist/*"]
     },
     "removeComments": false,
