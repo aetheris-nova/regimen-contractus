@@ -1,10 +1,10 @@
-import type { ILogger } from '@aetherisnova/types';
-import { createLogger } from '@aetherisnova/utils';
+import type { ILogger } from '_types';
+import { createLogger } from '_utils';
 import { Wallet } from 'ethers';
 
 // artifacts
 // @ts-ignore
-import artifact from '../contracts/Sigillum/Sigillum.abi.json';
+import artifact from '../../contracts/Sigillum/Sigillum.abi.json';
 /* eslint-enable @typescript-eslint/ban-ts-comment */
 
 // types

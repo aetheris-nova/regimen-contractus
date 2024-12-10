@@ -1,5 +1,5 @@
 {
-  "name": "@aetherisnova/types",
+  "name": "_types",
   "private": true,
   "description": "TypeScript types for the contract clients.",
   "repository": {

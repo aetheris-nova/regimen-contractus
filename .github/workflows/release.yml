@@ -13,8 +13,20 @@ permissions:
   pull-requests: write # to be able to comment on released pull requests
 
 jobs:
-  release_icons:
+  release_sigillum:
     name: "Release - @aetherisnova/sigillum"
     uses: ./.github/workflows/default_release.yml
     with:
       package_dir: "sigillum"
+
+  release_types:
+    name: "Release - _types"
+    uses: ./.github/workflows/default_release.yml
+    with:
+      package_dir: "_types"
+
+  release_utils:
+    name: "Release - _utils"
+    uses: ./.github/workflows/default_release.yml
+    with:
+      package_dir: "_utils"

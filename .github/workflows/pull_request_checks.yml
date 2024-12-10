@@ -53,10 +53,26 @@ jobs:
   # package specific
   ##
 
-  lint_build_test:
+  lint_build_test_sigillum:
     name: "Lint, Build & Test - @aetherisnova/sigillum"
     needs: [get_changed_files, validate_pr_title]
     if: contains(needs.get_changed_files.outputs.changed_files, 'packages/sigillum/')
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "@aetherisnova/sigillum"
+
+  lint_build_test_types:
+    name: "Lint, Build & Test - _types"
+    needs: [get_changed_files, validate_pr_title]
+    if: contains(needs.get_changed_files.outputs.changed_files, 'packages/_types/')
+    uses: ./.github/workflows/lint_build_test.yml
+    with:
+      package_name: "_types"
+
+  lint_build_test_utils:
+    name: "Lint, Build & Test - _utils"
+    needs: [get_changed_files, validate_pr_title]
+    if: contains(needs.get_changed_files.outputs.changed_files, 'packages/_utils/')
+    uses: ./.github/workflows/lint_build_test.yml
+    with:
+      package_name: "_utils"

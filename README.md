@@ -27,13 +27,14 @@ The repo follows the following structure:
 .
 ├─ packages
 │   ├── <package>
-│   │   ├── .releaserc       <-- semantic release configuration
+│   │   ├── .lintstagedrc.mjs
+│   │   ├── .releaserc        <-- semantic release configuration
 │   │   ├── LICENSE
-│   │   ├── package.json     <-- contains package dependencies and is used to run package-level scripts
+│   │   ├── package.json      <-- contains package dependencies and is used to run package-level scripts
 │   │   ├── README.md
 │   │   └── ...
-│   └── ...                  <-- other packages
-├── package.json             <-- root package.json that contains top-level dependencies and tools
+│   └── ...                   <-- other packages
+├── package.json              <-- root package.json that contains top-level dependencies and tools
 └── ...
 ```
 
@@ -49,6 +50,7 @@ The `packages/` directory contains, as the name suggests, the packages of the mo
 
 Each package **SHOULD** reflect the name of the package, i.e. the `packages/sigillum/` and **SHOULD** contain the following files and directories:
 
+* `.lintstagedrc.mjs` - Scripts to run on the pre-commit hook. This file is **REQUIRED**, however, if there are no scripts to run, use an empty file.
 * `.releaserc` - The local `semantic-release` configuration.
 * `LICENSE` - The license for the package.
 * `package.json` - The license for the package.
@@ -78,9 +80,11 @@ pnpm install
 
 ### 3.1. Packages
 
-| Name                                                   | Description                                             |
-|--------------------------------------------------------|---------------------------------------------------------|
-| [`sigillum`](./packages/sigillum/README.md)            | The basic smart contract for the Ordos membership NFTs. |
+| Name                                        | Visibility | Description                                             |
+|---------------------------------------------|------------|---------------------------------------------------------|
+| [`_types`](./packages/_types/README.md)     | `private`  | TypeScript types for the contract clients.              |
+| [`_utils`](./packages/_utils/README.md)     | `private`  | TypeScript utilities for the contract clients.          |
+| [`sigillum`](./packages/sigillum/README.md) | `public`   | The basic smart contract for the Ordos membership NFTs. |
 
 <sup>[Back to top ^][table-of-contents]</sup>
 

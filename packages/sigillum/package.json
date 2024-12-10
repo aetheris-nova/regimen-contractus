@@ -26,8 +26,8 @@
     "test:contracts": "forge test"
   },
   "dependencies": {
-    "@aetherisnova/types": "workspace:^",
-    "@aetherisnova/utils": "workspace:^"
+    "_types": "workspace:^",
+    "_utils": "workspace:^"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

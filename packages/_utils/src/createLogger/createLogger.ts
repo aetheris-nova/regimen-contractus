@@ -1,4 +1,4 @@
-import type { ILogger } from '@aetherisnova/types';
+import type { ILogger } from '_types';
 
 export default function createLogger(): ILogger {
   return {
