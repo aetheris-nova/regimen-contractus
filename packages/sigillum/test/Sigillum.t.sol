@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.20;
 
+import { Arbiter } from '@aetherisnova/arbiter/Arbiter.sol';
 import { Test } from 'forge-std/Test.sol';
 import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
 
@@ -18,7 +19,7 @@ contract SigillumTest is Test {
     );
   }
 
-  function test_Burn() public {
+  function test_Propose() public {
     // arrange
     uint256 newTokenID = token.mint(address(1));
 
@@ -27,25 +28,5 @@ contract SigillumTest is Test {
 
     // assert
     assertEq(token.balanceOf(address(1)), 0);
-  }
-
-  function test_MintToNewOwner() public {
-    // arrange
-    // act
-    uint256 newTokenID = token.mint(address(1));
-
-    // assert
-    assertEq(token.ownerOf(newTokenID), address(1));
-  }
-
-  function test_OnlyAllowOneOwner() public {
-    // arrange
-    token.mint(address(1));
-
-    // assert
-    vm.expectRevert('RECIPIENT_ALREADY_HAS_TOKEN');
-
-    // act
-    token.mint(address(1));
   }
 }

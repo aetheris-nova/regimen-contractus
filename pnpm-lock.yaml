@@ -133,8 +133,14 @@ importers:
         specifier: ^2.1.8
         version: 2.1.8(@types/node@22.10.1)
 
-  packages/regimen:
+  packages/arbiter:
     dependencies:
+      '@stablelib/base64':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@stablelib/utf8':
+        specifier: ^2.0.0
+        version: 2.0.0
       _types:
         specifier: workspace:^
         version: link:../_types

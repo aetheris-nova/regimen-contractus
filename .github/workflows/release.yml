@@ -28,11 +28,11 @@ jobs:
 
   release_regimen:
     needs: [release_types, release_utils]
-    name: "Release - @aetherisnova/regimen"
+    name: "Release - @aetherisnova/arbiter"
     uses: ./.github/workflows/publish_release.yml
     with:
-      package_dir: "regimen"
-      package_name: "@aetherisnova/regimen"
+      package_dir: "arbiter"
+      package_name: "@aetherisnova/arbiter"
       with_foundry: true
 
   release_sigillum:
