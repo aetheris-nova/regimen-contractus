@@ -4,8 +4,8 @@ on:
   pull_request:
 
 jobs:
-  get_changed_files:
-    name: "Get Changed Files"
+  changed_files:
+    name: "Changed Files"
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -55,24 +55,24 @@ jobs:
 
   lint_build_test_types:
     name: "Lint, Build & Test - _types"
-    needs: [get_changed_files, validate_pr_title]
-    if: ${{ needs.changes.outputs._types == 'true' }}
+    needs: [changed_files, validate_pr_title]
+    if: ${{ needs.changed_files.outputs._types == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "_types"
 
   lint_build_test_utils:
     name: "Lint, Build & Test - _utils"
-    needs: [get_changed_files, validate_pr_title]
-    if: ${{ needs.changes.outputs._utils == 'true' }}
+    needs: [changed_files, validate_pr_title]
+    if: ${{ needs.changed_files.outputs._utils == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "_utils"
 
   lint_build_test_sigillum:
     name: "Lint, Build & Test - @aetherisnova/sigillum"
-    needs: [get_changed_files, validate_pr_title]
-    if: ${{ needs.changes.outputs.sigillum == 'true' }}
+    needs: [changed_files, validate_pr_title]
+    if: ${{ needs.changed_files.outputs.sigillum == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "@aetherisnova/sigillum"
