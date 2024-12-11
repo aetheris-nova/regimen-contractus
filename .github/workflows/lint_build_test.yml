@@ -61,7 +61,7 @@ jobs:
 
   test_with_anvil:
     if: ${{ inputs.with_foundry == true }}
-    name: "Test"
+    name: "Test With Foundry"
     runs-on: ubuntu-latest
     steps:
       - name: "🛎 Checkout"

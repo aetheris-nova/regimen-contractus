@@ -24,6 +24,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
             });
+            console.log(changedFiles.data.map(f => f.filename).join(','));
             return changedFiles.data.map(f => f.filename).join(',');
 
   validate_pr_title:
