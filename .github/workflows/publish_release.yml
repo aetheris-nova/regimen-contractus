@@ -40,6 +40,11 @@ jobs:
         run:  |
           pnpm postinstall
           pnpm -F ${{ inputs.package_name }} run build
+      - name: "📝 Create .npmrc"
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+          echo "@aetherisnova:registry=https://registry.npmjs.org" >> .npmrc
+          echo "access=public" >> .npmrc
       - name: "🔖 Release"
         env:
           HUSKY: 0 # disable husky
