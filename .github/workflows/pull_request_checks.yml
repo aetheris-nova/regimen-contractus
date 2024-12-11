@@ -7,25 +7,24 @@ jobs:
   get_changed_files:
     name: "Get Changed Files"
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     outputs:
-      changed_files: ${{ steps.get_changed_files.outputs.result }}
+      _types: ${{ steps.filter.outputs._types }}
+      _utils: ${{ steps.filter.outputs._utils }}
+      sigillum: ${{ steps.filter.outputs.sigillum }}
     steps:
-      - name: "🛎 Checkout"
-        uses: actions/checkout@v4
-      - name: "📥 Get List"
-        id: get_changed_files
-        uses: actions/github-script@v7
+      - name: "📥 Filter"
+        uses: dorny/paths-filter@v3
+        id: filter
         with:
-          debug: true
-          result-encoding: string
-          script: |
-            const changedFiles = await github.rest.pulls.listFiles({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-            });
-            console.log(changedFiles.data.map(f => f.filename).join(','));
-            return changedFiles.data.map(f => f.filename).join(',');
+          filters: |
+            _types:
+              - 'packages/_types/**'
+            _utils:
+              - 'packages/_utils/**'
+            sigillum:
+              - 'packages/sigillum/**'
 
   validate_pr_title:
     name: "Validate PR Title"
@@ -54,19 +53,10 @@ jobs:
   # package specific
   ##
 
-  lint_build_test_sigillum:
-    name: "Lint, Build & Test - @aetherisnova/sigillum"
-    needs: [get_changed_files, validate_pr_title]
-    if: contains(needs.get_changed_files.outputs.changed_files, 'packages/sigillum/')
-    uses: ./.github/workflows/lint_build_test.yml
-    with:
-      package_name: "@aetherisnova/sigillum"
-      with_foundry: true
-
   lint_build_test_types:
     name: "Lint, Build & Test - _types"
     needs: [get_changed_files, validate_pr_title]
-    if: contains(needs.get_changed_files.outputs.changed_files, 'packages/_types/')
+    if: ${{ needs.changes.outputs._types == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "_types"
@@ -74,7 +64,16 @@ jobs:
   lint_build_test_utils:
     name: "Lint, Build & Test - _utils"
     needs: [get_changed_files, validate_pr_title]
-    if: contains(needs.get_changed_files.outputs.changed_files, 'packages/_utils/')
+    if: ${{ needs.changes.outputs._utils == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "_utils"
+
+  lint_build_test_sigillum:
+    name: "Lint, Build & Test - @aetherisnova/sigillum"
+    needs: [get_changed_files, validate_pr_title]
+    if: ${{ needs.changes.outputs.sigillum == 'true' }}
+    uses: ./.github/workflows/lint_build_test.yml
+    with:
+      package_name: "@aetherisnova/sigillum"
+      with_foundry: true
