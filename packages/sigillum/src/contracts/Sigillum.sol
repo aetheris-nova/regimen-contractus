@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
 import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
-import { Strings } from 'openzeppelin-contracts/contracts/utils/Strings.sol';
 import { ERC721 } from 'solmate/tokens/ERC721.sol';
 
 contract Sigillum is ERC721, AccessControl {

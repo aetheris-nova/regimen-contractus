@@ -208,9 +208,12 @@ export default class Sigillum {
           }
 
           return acc;
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          //  @typescript-eslint/no-unused-vars
         } catch (error) {
           return acc;
         }
+        /* eslint-enable @typescript-eslint/no-unused-vars */
       }, null);
 
       if (!log) {
