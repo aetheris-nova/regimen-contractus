@@ -76,4 +76,4 @@ jobs:
         run: |
           pnpm postinstall
           pnpm -F ${{ inputs.package_name }} run build
-          ./scripts/test.sh "${{ inputs.package_name }}"
+          ./scripts/test_with_anvil.sh "${{ inputs.package_name }}"
