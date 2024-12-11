@@ -15,18 +15,20 @@ permissions:
 jobs:
   release_sigillum:
     name: "Release - @aetherisnova/sigillum"
-    uses: ./.github/workflows/default_release.yml
+    uses: ./.github/workflows/publish_release.yml
     with:
       package_dir: "sigillum"
+      package_name: "@aetherisnova/sigillum"
+      with_foundry: true
 
   release_types:
     name: "Release - _types"
-    uses: ./.github/workflows/default_release.yml
+    uses: ./.github/workflows/internal_release.yml
     with:
       package_dir: "_types"
 
   release_utils:
     name: "Release - _utils"
-    uses: ./.github/workflows/default_release.yml
+    uses: ./.github/workflows/internal_release.yml
     with:
       package_dir: "_utils"

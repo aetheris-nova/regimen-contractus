@@ -7,6 +7,15 @@ on:
         description: "The directory name of the package."
         required: true
         type: string
+      package_name:
+        description: "The pnpm package name."
+        required: true
+        type: string
+      with_foundry:
+        default: false
+        description: "Whether foundry is used to build and run tests."
+        required: false
+        type: boolean
 
 permissions:
   contents: write # to be able to publish a github release
@@ -24,6 +33,13 @@ jobs:
         uses: actions/checkout@v4
       - name: "🔧 Setup"
         uses: ./.github/actions/use-pnpm-dependencies
+      - name: "🔧 Setup Foundry"
+        if: ${{ inputs.with_foundry == true }}
+        uses: foundry-rs/foundry-toolchain@v1
+      - name: "🏗️ Build"
+        run:  |
+          pnpm postinstall
+          pnpm -F ${{ inputs.package_name }} run build
       - name: "🔖 Release"
         env:
           HUSKY: 0 # disable husky
