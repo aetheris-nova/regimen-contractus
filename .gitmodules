@@ -7,3 +7,9 @@
 [submodule "packages/sigillum/lib/openzeppelin-contracts"]
 	path = packages/sigillum/lib/openzeppelin-contracts
 	url = https://github.com/Openzeppelin/openzeppelin-contracts
+[submodule "packages/regimen/lib/forge-std"]
+	path = packages/regimen/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "packages/regimen/lib/openzeppelin-contracts"]
+	path = packages/regimen/lib/openzeppelin-contracts
+	url = https://github.com/Openzeppelin/openzeppelin-contracts

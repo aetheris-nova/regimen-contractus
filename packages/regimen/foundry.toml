@@ -1,0 +1,9 @@
+[profile.default]
+extra_output_files = [
+  "abi",
+  "evm.bytecode"
+]
+libs = ["lib"]
+out = "dist/contracts"
+solc = "0.8.24"
+src = "src/contracts"
