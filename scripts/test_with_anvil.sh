@@ -2,15 +2,15 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/set_vars.sh
 
-# Public:
+# Public: Runs test against and anvil node running on http://127.0.0.1:8545
 #
-# $1 - the name of the chain.
+# $1 - The name of the package, i.e. @aetherisnova/sigillum.
 #
 # Examples
 #
-#   ./bin/test.sh "conflux"
+#   ./test_with_anvil.sh "@aetherisnova/sigillum"
 #
-# Returns with exit code 1 if the tests fail, otherwise exit code 0 is returned.
+# Returns with exit code 1 if the tests fail or not package was supplied, otherwise exit code 0 is returned.
 function main {
   local attempt
   local container_name
@@ -21,16 +21,20 @@ function main {
   attempt=0
   exit_code=0
   health=starting
-  service_name="${1}_node"
 
   set_vars
 
+  if [ -z "${1}" ]; then
+    printf "%b no package specified, use: ./test_with_anvil.sh [package] \n" "${ERROR_PREFIX}"
+    exit 1
+  fi
+
   docker compose up \
-    "${service_name}" \
     --build \
     -d
 
-  container_name=$(docker compose ps --format json | jq --arg service_name "${service_name}" -r '.[] | select(.Service==$service_name) .Name')
+  container_name=aetherisnova_anvil
+  service_name=anvil
 
   while [ ${attempt} -le 29 ]; do
     sleep 2
@@ -49,8 +53,7 @@ function main {
 
   # if the service are up and running, we can run tests
   if [[ "${health}" == "healthy" ]]; then
-    pnpm build
-    yarn jest ".*.${1}.test.ts"
+    pnpm -F "${1}" run test
     exit_code=$? # get exit code of tests
   else
     docker logs --details "${container_name}"
@@ -58,10 +61,10 @@ function main {
   fi
 
   # stop the services and remove
-  docker-compose down
+  docker compose down
 
   exit ${exit_code}
 }
 
 # And so, it begins...
-main "$1"
+main "$@"

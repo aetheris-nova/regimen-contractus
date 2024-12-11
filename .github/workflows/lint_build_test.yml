@@ -34,7 +34,7 @@ jobs:
         with:
           submodules: recursive
       - name: "🔧 Setup Foundry"
-        if: ${{ inputs.with_foundry }}
+        if: ${{ inputs.with_foundry == true }}
         uses: foundry-rs/foundry-toolchain@v1
       - name: "🔧 Setup Node"
         uses: ./.github/actions/use-pnpm-dependencies
@@ -44,6 +44,23 @@ jobs:
           pnpm -F ${{ inputs.package_name }} run build
 
   test:
+    if: ${{ inputs.with_foundry == false }}
+    name: "Test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🛎 Checkout"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: "🔧 Setup Node"
+        uses: ./.github/actions/use-pnpm-dependencies
+      - name: "🧪 Test"
+        run: |
+          pnpm postinstall
+          pnpm -F ${{ inputs.package_name }} run test
+
+  test_with_anvil:
+    if: ${{ inputs.with_foundry == true }}
     name: "Test"
     runs-on: ubuntu-latest
     steps:
@@ -52,11 +69,11 @@ jobs:
         with:
           submodules: recursive
       - name: "🔧 Setup Foundry"
-        if: ${{ inputs.with_foundry }}
         uses: foundry-rs/foundry-toolchain@v1
       - name: "🔧 Setup Node"
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🧪 Test"
         run: |
           pnpm postinstall
-          pnpm -F ${{ inputs.package_name }} run test
+          pnpm -F ${{ inputs.package_name }} run build
+          ./scripts/test.sh "${{ inputs.package_name }}"
