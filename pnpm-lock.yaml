@@ -218,6 +218,9 @@ importers:
         specifier: workspace:^
         version: link:../_utils
     devDependencies:
+      '@aetherisnova/arbiter':
+        specifier: workspace:^
+        version: link:../arbiter
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1

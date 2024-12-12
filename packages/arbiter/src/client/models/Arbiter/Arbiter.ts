@@ -8,6 +8,7 @@ import {
   ContractFactory,
   ContractTransactionReceipt,
   type ContractTransactionResponse,
+  getBytes,
   makeError,
   Signer,
 } from 'ethers';
@@ -159,7 +160,7 @@ export default class Arbiter {
 
   /**
    * Gets a proposal by its ID.
-   * @param {string} id - The hex-encoded proposal ID.
+   * @param {string} id - The hex-encoded proposal ID with the "0x" prefixed.
    * @returns {Promise<IProposal | null>} A promise that resolves to the proposal or null if the proposal does not
    * exist.
    * @public
@@ -170,13 +171,7 @@ export default class Arbiter {
     let dataURI: string;
 
     try {
-      if (id.length > 64) {
-        throw makeError('invalid id length, expected a 32 byte hex encoded string', 'UNKNOWN_ERROR');
-      }
-
-      dataURI = await this._contract.proposalURI(
-        `0x${id}` // prefix with "0x"
-      );
+      dataURI = await this._contract.proposalURI(getBytes(id));
       decodedData = decodeBase64(dataURI.split(',')[1]);
 
       return JSON.parse(decodeUTF8(decodedData));

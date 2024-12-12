@@ -19,6 +19,7 @@ contract Sigillum is ERC721, AccessControl {
 
   // events
   event ArbiterUpdated(address arbiter);
+  event ProposalCreated(bytes32 id, address proposer, uint48 start, uint32 duration);
 
   constructor(
     string memory _name,
@@ -65,11 +66,11 @@ contract Sigillum is ERC721, AccessControl {
       );
   }
 
-  function supportsInterface(bytes4 interfaceId) external view virtual override(AccessControl, ERC721) returns (bool) {
+  function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, ERC721) returns (bool) {
     return super.supportsInterface(interfaceId);
   }
 
-  function tokenURI(uint256 id) external view virtual override returns (string memory) {
+  function tokenURI(uint256 id) public view virtual override returns (string memory) {
     require(_ownerOf[id] != address(0), 'TOKEN_DOES_NOT_EXIST');
 
     return
@@ -86,7 +87,7 @@ contract Sigillum is ERC721, AccessControl {
               description,
               '",',
               '"id": ',
-              id,
+              abi.encodePacked('0x', id),
               ',',
               '"name": "',
               name,
@@ -134,23 +135,28 @@ contract Sigillum is ERC721, AccessControl {
 
   /**
    * @notice Calls the arbiter contract and submits the proposal.
+   * @dev Emits a `ProposalCreated(bytes32,address,uint48,uint32)` event.
    * @param title The title of the proposal. Must be less that 256 characters.
    * @param start The timestamp (in seconds) of when the voting will start. Must be now, or a future date.
    * @param duration The length of time the voting for the proposal will last.
    * @return The created proposal ID.
    */
   function propose(string memory title, uint48 start, uint32 duration) external returns (bytes32) {
+    require(balanceOf(msg.sender) != 0, 'TOKEN_DOES_NOT_EXIST');
     require(bytes(title).length <= 256, 'TITLE_TOO_LONG');
-    require(start >= block.timestamp, 'START_TIME_MUST_BE_IN_THE_FUTURE');
+    require(start >= block.timestamp, 'START_TIME_IN_PAST');
 
-    IArbiter memory arbiterContract = IArbiter(arbiter);
+    IArbiter arbiterContract = IArbiter(arbiter);
+    bytes32 proposalID = arbiterContract.propose(msg.sender, title, start, duration);
 
-    return arbiterContract.propose(msg.sender, title, start, duration);
+    emit ProposalCreated(proposalID, msg.sender, start, duration);
+
+    return proposalID;
   }
 
   /**
    * @notice Updates the arbiter contract that allows for submission of proposals and voting of proposals.
-   * @dev Emits a an `ArbiterUpdated(address)` event.
+   * @dev Emits an `ArbiterUpdated(address)` event.
    * @param _arbiter The new arbiter contract address.
    */
   function setArbiter(address _arbiter) external onlyRole(ISSUER_ROLE) {

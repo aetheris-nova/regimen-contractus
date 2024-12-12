@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import { IERC721 } from 'forge-std/interfaces/IERC721.sol';
 import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
 import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
+import { Strings } from 'openzeppelin-contracts/contracts/utils/Strings.sol';
 
 /**
  * @title Arbiter
@@ -78,6 +79,33 @@ contract Arbiter is AccessControl {
     return string(str);
   }
 
+  function _uintToString(uint256 value) internal pure returns (string memory) {
+    // handle the edge case of 0
+    if (value == 0) {
+      return '0';
+    }
+
+    uint256 temp = value;
+    uint256 digits;
+
+    // count the number of digits in the uint value
+    while (temp != 0) {
+      digits++;
+      temp /= 10;
+    }
+
+    bytes memory buffer = new bytes(digits);
+    uint256 index = digits - 1;
+
+    // convert the value to string by extracting each digit
+    while (value != 0) {
+      buffer[index--] = bytes1(uint8(48 + (value % 10))); // 48 is the ascii offset for '0'
+      value /= 10;
+    }
+
+    return string(buffer);
+  }
+
   /**
    * external functions - read
    */
@@ -104,22 +132,23 @@ contract Arbiter is AccessControl {
             abi.encodePacked(
               '{',
               '"canceled": ',
-              proposal.canceled,
+              proposal.canceled ? 'true' : 'false',
               ',',
-              '"duration": ',
-              proposal.duration,
-              ',',
+              //              '"duration": ',
+              //              _uintToString(proposal.duration),
+              //              ',',
               '"executed": ',
-              proposal.executed,
+              proposal.executed ? 'true' : 'false',
               ',',
               '"id": "',
               _toHexString(id),
               '",',
-              '"proposer": "',
-              proposal.proposer,
-              '",',
-              '"start": ',
-              proposal.start,
+              //              '"proposer": "',
+              //              Strings.toHexString(proposal.proposer),
+              //              '",',
+              //              '"start": ',
+              //              _uintToString(proposal.start),
+              //              ',',
               '"title": "',
               proposal.title,
               '"',
@@ -162,7 +191,7 @@ contract Arbiter is AccessControl {
   function propose(address proposer, string memory title, uint48 start, uint32 duration) external returns (bytes32) {
     require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
     require(bytes(title).length <= 256, 'TITLE_TOO_LONG');
-    require(start >= block.timestamp, 'START_TIME_MUST_BE_IN_THE_FUTURE');
+    require(start >= block.timestamp, 'START_TIME_IN_PAST');
 
     ProposalDetails memory proposal = ProposalDetails(false, duration, false, proposer, start, title);
     bytes32 proposalID = _generateProposalID(proposal);

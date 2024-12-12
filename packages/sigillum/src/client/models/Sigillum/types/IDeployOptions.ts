@@ -4,6 +4,7 @@ import type { JsonRpcProvider } from 'ethers';
 import type IBaseOptions from './IBaseOptions';
 
 interface IDeployOptions extends IBaseOptions {
+  arbiter: string;
   description: string;
   name: string;
   provider: JsonRpcProvider;

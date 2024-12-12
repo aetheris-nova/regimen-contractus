@@ -17,21 +17,22 @@ describe(Arbiter.name, () => {
       throw new Error('no rpc url set in the .env.test file');
     }
 
-    if (!process.env.ACCOUNT_1_PRIVATE_KEY) {
-      throw new Error('no account 1 private key set in the .env.test file');
+    if (!process.env.ACCOUNT_0_PRIVATE_KEY) {
+      throw new Error('no account 0 private key set in the .env.test file');
     }
 
     provider = new JsonRpcProvider(process.env.RPC_URL);
-    deployerSigner = new Wallet(process.env.ACCOUNT_1_PRIVATE_KEY, provider);
+    deployerSigner = new Wallet(process.env.ACCOUNT_0_PRIVATE_KEY, provider);
     contract = await Arbiter.deploy({
       provider,
       silent: true,
       signerAddress: deployerSigner.address,
     });
-  });
+  }, 60000);
 
   beforeEach(async () => {
     tokenContract = await Sigillum.deploy({
+      arbiter: contract.address(),
       description: 'The Sigillum that proves membership to the Ordo Administratorum.',
       name: 'Sigillum Ordo Administratorum',
       provider,
@@ -55,9 +56,9 @@ describe(Arbiter.name, () => {
     });
   });
 
-  describe.only('proposalByID()', () => {
+  describe('proposalByID()', () => {
     it('should return null if no proposal exists', async () => {
-      const result = await contract.proposalByID(Buffer.from(randomBytes(32)).toString('hex'));
+      const result = await contract.proposalByID(`0x${Buffer.from(randomBytes(32)).toString('hex')}`);
 
       expect(result).toBeNull();
     });

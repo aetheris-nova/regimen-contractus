@@ -18,7 +18,7 @@ import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
 import type { IContractMetadata, ISigillumContract } from '@client/types';
-import type { IDeployOptions, IInitOptions, INewOptions } from './types';
+import type { IDeployOptions, IInitOptions, INewOptions, IProposeOptions } from './types';
 
 export default class Sigillum {
   protected _contract: ISigillumContract;
@@ -38,6 +38,7 @@ export default class Sigillum {
    */
 
   public static async deploy({
+    arbiter,
     debug = false,
     description,
     name,
@@ -58,7 +59,7 @@ export default class Sigillum {
       signer = await provider.getSigner(signerAddress);
       creatorAddress = await signer.getAddress();
       contractFactory = new ContractFactory(artifact.abi, artifact.bytecode, signer);
-      contract = (await contractFactory.deploy(name, symbol, description)) as ISigillumContract;
+      contract = (await contractFactory.deploy(name, symbol, description, arbiter)) as ISigillumContract;
 
       await contract.waitForDeployment();
 
@@ -108,6 +109,18 @@ export default class Sigillum {
    */
   public address(): string {
     return this._address;
+  }
+
+  public async arbiter(): Promise<string> {
+    const _functionName = 'arbiter';
+
+    try {
+      return await this._contract.arbiter();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
   }
 
   /**
@@ -178,10 +191,23 @@ export default class Sigillum {
     }
   }
 
+  public async description(): Promise<string> {
+    const _functionName = 'description';
+
+    try {
+      return await this._contract.description();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
   /**
    * Mints a new token to the recipient.
    * @param {string} recipient - The address of the recipient.
    * @returns {Promise<IStateChangeResult<bigint>>} A promise that resolves to the transaction and the new token ID.
+   * @public
    */
   public async mint(recipient: string): Promise<IStateChangeResult<bigint>> {
     const _functionName = 'mint';
@@ -231,6 +257,102 @@ export default class Sigillum {
     }
   }
 
+  public async name(): Promise<string> {
+    const _functionName = 'name';
+
+    try {
+      return await this._contract.name();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Submits a new proposal to the arbiter contract.
+   * @param {IProposeOptions} options - The title, start timestamp (in seconds) and the duration (in seconds).
+   * @returns {Promise<IStateChangeResult<string>>} A promise that resolves to the transaction and the proposal ID.
+   * @public
+   */
+  public async propose({ duration, start, title }: IProposeOptions): Promise<IStateChangeResult<string>> {
+    const _functionName = 'propose';
+    let contractInterface: Interface;
+    let log: LogDescription | null;
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.propose(title, start, duration);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      contractInterface = new Interface(artifact.abi);
+      log = receipt.logs.reduce((acc, value) => {
+        try {
+          const parsedLog = contractInterface.parseLog(value);
+
+          if (parsedLog?.name === 'ProposalCreated') {
+            return parsedLog;
+          }
+
+          return acc;
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          //  @typescript-eslint/no-unused-vars
+        } catch (error) {
+          return acc;
+        }
+        /* eslint-enable @typescript-eslint/no-unused-vars */
+      }, null);
+
+      if (!log) {
+        throw makeError('failed to parse proposal created event log', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: log.args[0], // ProposalCreated(bytes32,address,uint48,uint32) - the proposal ID
+        transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Updates the arbiter contract. Must have the `ISSUER_ROLE`.
+   * @param {string} arbiter - The arbiter contract address.
+   * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
+   * @public
+   */
+  public async setArbiter(arbiter: string): Promise<IStateChangeResult<null>> {
+    const _functionName = 'setArbiter';
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.setArbiter(arbiter);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: null,
+        transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
   /**
    * Gets the current total supply of tokens.
    * @returns {Promise<bigint>} A promise that resolves to the current total supply of tokens.
@@ -241,6 +363,18 @@ export default class Sigillum {
 
     try {
       return await this._contract.supply();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  public async symbol(): Promise<string> {
+    const _functionName = 'symbol';
+
+    try {
+      return await this._contract.symbol();
     } catch (error) {
       this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
 
@@ -260,6 +394,23 @@ export default class Sigillum {
 
     try {
       return await this._contract.tokenURI(id);
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the version of the contract.
+   * @returns {Promise<string>} A promise that resolves to the version.
+   * @public
+   */
+  public async version(): Promise<string> {
+    const _functionName = 'version';
+
+    try {
+      return await this._contract.version();
     } catch (error) {
       this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
 
