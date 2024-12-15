@@ -56,9 +56,9 @@ describe(Arbiter.name, () => {
     });
   });
 
-  describe('proposalByID()', () => {
+  describe.only('proposalByAddress()', () => {
     it('should return null if no proposal exists', async () => {
-      const result = await contract.proposalByID(`0x${Buffer.from(randomBytes(32)).toString('hex')}`);
+      const result = await contract.proposalByAddress(Wallet.createRandom(null).address);
 
       expect(result).toBeNull();
     });

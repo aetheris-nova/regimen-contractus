@@ -313,7 +313,7 @@ export default class Sigillum {
       }
 
       return {
-        result: log.args[0], // ProposalCreated(bytes32,address,uint48,uint32) - the proposal ID
+        result: log.args[0], // ProposalCreated(address,address,uint48,uint32) - the proposal ID
         transaction: receipt,
       };
     } catch (error) {

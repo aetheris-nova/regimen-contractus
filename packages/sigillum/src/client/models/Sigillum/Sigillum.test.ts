@@ -194,7 +194,7 @@ describe(Sigillum.name, () => {
       throw new Error('expected token does not exist error');
     });
 
-    it.only('should create a proposal', async () => {
+    it('should create a proposal', async () => {
       const _contract = await Sigillum.init({
         address: contract.address(),
         provider,
@@ -210,7 +210,7 @@ describe(Sigillum.name, () => {
         start,
         title,
       });
-      const proposal = await arbiterContract.proposalByID(result.result);
+      const proposal = await arbiterContract.proposalByAddress(result.result);
 
       if (!proposal) {
         throw new Error(`proposal "${result.result}" not found`);

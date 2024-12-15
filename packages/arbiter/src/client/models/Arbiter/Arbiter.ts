@@ -3,37 +3,43 @@ import { createLogger } from '_utils';
 import { decode as decodeBase64 } from '@stablelib/base64';
 import { decode as decodeUTF8 } from '@stablelib/utf8';
 import {
+  BadDataError,
   BaseContract,
   CallExceptionError,
   ContractFactory,
   ContractTransactionReceipt,
   type ContractTransactionResponse,
   getBytes,
+  Log,
   makeError,
+  Provider,
   Signer,
 } from 'ethers';
 
 // artifacts
-import artifact from '@dist/contracts/Arbiter.sol/Arbiter.json';
+import arbiterArtifact from '@dist/contracts/Arbiter.sol/Arbiter.json';
+import proposalArtifact from '@dist/contracts/Proposal.sol/Proposal.json';
 
 // errors
 import { PROPOSAL_DOES_NOT_EXIST } from '@client/constants';
 
 // types
-import type { IArbiterContract, IProposal } from '@client/types';
+import type { IArbiterContract, IProposal, IProposalContract } from '@client/types';
 import type { IDeployOptions, IInitOptions, INewOptions } from './types';
 
 export default class Arbiter {
+  protected _address: string;
   protected _contract: IArbiterContract;
   protected _debug: boolean;
-  protected _address: string;
   protected readonly _logger: ILogger;
+  protected _provider: Provider;
 
-  private constructor({ address, contract, debug = false, logger }: INewOptions) {
+  private constructor({ address, contract, debug = false, logger, provider }: INewOptions) {
     this._address = address;
     this._contract = contract;
     this._debug = debug;
     this._logger = logger;
+    this._provider = provider;
   }
 
   /**
@@ -57,7 +63,7 @@ export default class Arbiter {
     try {
       signer = await provider.getSigner(signerAddress);
       creatorAddress = await signer.getAddress();
-      contractFactory = new ContractFactory(artifact.abi, artifact.bytecode, signer);
+      contractFactory = new ContractFactory(arbiterArtifact.abi, arbiterArtifact.bytecode, signer);
       contract = (await contractFactory.deploy()) as IArbiterContract;
 
       await contract.waitForDeployment();
@@ -74,6 +80,7 @@ export default class Arbiter {
         contract,
         debug,
         logger,
+        provider,
       });
     } catch (error) {
       logger.error(`${Arbiter.name}#${_functionName}: failed to deploy contract`, error);
@@ -91,9 +98,14 @@ export default class Arbiter {
   }: IInitOptions): Promise<Arbiter> {
     return new Arbiter({
       address,
-      contract: new BaseContract(address, artifact.abi, await provider.getSigner(signerAddress)) as IArbiterContract,
+      contract: new BaseContract(
+        address,
+        arbiterArtifact.abi,
+        await provider.getSigner(signerAddress)
+      ) as IArbiterContract,
       debug,
       logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
+      provider,
     });
   }
 
@@ -159,27 +171,30 @@ export default class Arbiter {
   }
 
   /**
-   * Gets a proposal by its ID.
-   * @param {string} id - The hex-encoded proposal ID with the "0x" prefixed.
+   * Gets a proposal details by its contract address.
+   * @param {string} address - The proposal's contract address.
    * @returns {Promise<IProposal | null>} A promise that resolves to the proposal or null if the proposal does not
    * exist.
    * @public
    */
-  public async proposalByID(id: string): Promise<IProposal | null> {
-    const _functionName = 'proposalByID';
-    let decodedData: Uint8Array;
-    let dataURI: string;
+  public async proposalByAddress(address: string): Promise<IProposal | null> {
+    const _functionName = 'proposalByAddress';
+    const proposalContract = new BaseContract(address, proposalArtifact.abi, this._provider) as IProposalContract;
 
     try {
-      dataURI = await this._contract.proposalURI(getBytes(id));
-      decodedData = decodeBase64(dataURI.split(',')[1]);
+      const [canceled, duration, executed, proposer, start, title] = await proposalContract.details();
 
-      return JSON.parse(decodeUTF8(decodedData));
+      return {
+        canceled,
+        duration,
+        executed,
+        id: address,
+        proposer,
+        start,
+        title,
+      };
     } catch (error) {
-      if (
-        (error as CallExceptionError).code === 'CALL_EXCEPTION' &&
-        (error as CallExceptionError).reason === PROPOSAL_DOES_NOT_EXIST
-      ) {
+      if ((error as BadDataError).code === 'BAD_DATA') {
         return null;
       }
 

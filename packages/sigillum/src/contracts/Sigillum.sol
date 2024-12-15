@@ -19,7 +19,7 @@ contract Sigillum is ERC721, AccessControl {
 
   // events
   event ArbiterUpdated(address arbiter);
-  event ProposalCreated(bytes32 id, address proposer, uint48 start, uint32 duration);
+  event ProposalCreated(address proposal, address proposer, uint48 start, uint32 duration);
 
   constructor(
     string memory _name,
@@ -110,6 +110,14 @@ contract Sigillum is ERC721, AccessControl {
    * external functions - write
    */
 
+  /**
+   * @notice Burns a token.
+   * @dev
+   * * Emits a `Transfer(address,address,uint256)` event, where the `to` address is a zero address.
+   * * This will error if the token does not exist.
+   * * The sender **MUST** have the ISSUER_ROLE.
+   * @param id The ID of the token to burn.
+   */
   function burn(uint256 id) external onlyRole(ISSUER_ROLE) {
     require(_ownerOf[id] != address(0), 'TOKEN_DOES_NOT_EXIST');
 
@@ -118,6 +126,15 @@ contract Sigillum is ERC721, AccessControl {
     supply = supply - 1;
   }
 
+  /**
+   * @notice Mints a new token.
+   * @dev
+   * * Emits a `Transfer(address,address,uint256)` event, where the `from` address is a zero address.
+   * * This will error if the recipient already has a token.
+   * * The sender **MUST** have the ISSUER_ROLE.
+   * @param recipient The recipient of the token.
+   * @return The token ID.
+   */
   function mint(address recipient) external onlyRole(ISSUER_ROLE) returns (uint256) {
     uint256 newItemId;
 
@@ -135,23 +152,23 @@ contract Sigillum is ERC721, AccessControl {
 
   /**
    * @notice Calls the arbiter contract and submits the proposal.
-   * @dev Emits a `ProposalCreated(bytes32,address,uint48,uint32)` event.
+   * @dev Emits a `ProposalCreated(address,address,uint48,uint32)` event.
    * @param title The title of the proposal. Must be less that 256 characters.
    * @param start The timestamp (in seconds) of when the voting will start. Must be now, or a future date.
    * @param duration The length of time the voting for the proposal will last.
-   * @return The created proposal ID.
+   * @return The created proposal contract address.
    */
-  function propose(string memory title, uint48 start, uint32 duration) external returns (bytes32) {
+  function propose(string memory title, uint48 start, uint32 duration) external returns (address) {
     require(balanceOf(msg.sender) != 0, 'TOKEN_DOES_NOT_EXIST');
     require(bytes(title).length <= 256, 'TITLE_TOO_LONG');
     require(start >= block.timestamp, 'START_TIME_IN_PAST');
 
     IArbiter arbiterContract = IArbiter(arbiter);
-    bytes32 proposalID = arbiterContract.propose(msg.sender, title, start, duration);
+    address proposal = arbiterContract.propose(msg.sender, title, start, duration);
 
-    emit ProposalCreated(proposalID, msg.sender, start, duration);
+    emit ProposalCreated(proposal, msg.sender, start, duration);
 
-    return proposalID;
+    return proposal;
   }
 
   /**
