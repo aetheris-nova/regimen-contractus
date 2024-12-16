@@ -8,6 +8,10 @@ import { RECIPIENT_ALREADY_HAS_TOKEN, TOKEN_DOES_NOT_EXIST } from '@client/const
 // models
 import Sigillum from './Sigillum';
 
+// utils
+import { wait } from '@test/utils';
+import ITokenMetadata from '../../types/ITokenMetadata';
+
 describe(Sigillum.name, () => {
   const description = 'The Sigillum that proves membership to the Ordo Administratorum.';
   const name = 'Sigillum Ordo Administratorum';
@@ -115,6 +119,7 @@ describe(Sigillum.name, () => {
   test('contractMetadata()', async () => {
     const result = await contract.contractMetadata();
 
+    expect(result.arbiter.toLowerCase()).toBe(arbiterContract.address());
     expect(result.description).toBe(description);
     expect(result.name).toBe(name);
     expect(result.symbol).toBe(symbol);
@@ -223,10 +228,10 @@ describe(Sigillum.name, () => {
     });
   });
 
-  describe('tokenURI()', () => {
+  describe('tokenMetadata()', () => {
     it('should error when no token exists', async () => {
       try {
-        await contract.tokenURI(BigInt('99'));
+        await contract.tokenMetadata(BigInt('99'));
       } catch (error) {
         expect((error as EthersError).code).toBe('CALL_EXCEPTION');
         expect((error as CallExceptionError).reason).toBe(TOKEN_DOES_NOT_EXIST);
@@ -235,6 +240,89 @@ describe(Sigillum.name, () => {
       }
 
       throw new Error('expected token does not exist error');
+    });
+
+    it('should return the token metadata', async () => {
+      const recipient = Wallet.createRandom(provider);
+      const { result } = await contract.mint(recipient.address); // mint a new token
+      let tokenMetadata: ITokenMetadata;
+
+      tokenMetadata = await contract.tokenMetadata(result);
+
+      expect(tokenMetadata.arbiter.toLowerCase()).toBe(arbiterContract.address());
+      expect(tokenMetadata.description).toBe(description);
+      expect(tokenMetadata.id).toBe(Number(result));
+      expect(tokenMetadata.name).toBe(name);
+      expect(tokenMetadata.symbol).toBe(symbol);
+    });
+  });
+
+  describe('vote()', () => {
+    it('should error when the sender is not a token holder', async () => {
+      const start = new Date();
+      let _contract = await Sigillum.init({
+        address: contract.address(),
+        provider,
+        signerAddress: tokenHolderSigner.address,
+        silent: true,
+      });
+
+      start.setSeconds(new Date().getSeconds() + 1); // 1 second later
+
+      const { result } = await _contract.propose({
+        duration: BigInt(86400), // 1 day
+        start: BigInt((start.getTime() / 1000).toFixed(0)),
+        title: 'Decree: Founding Of The Ordo Administratorum',
+      });
+
+      await wait(start.getTime() - new Date().getTime());
+
+      // vote with a not permitted address
+      _contract = await Sigillum.init({
+        address: contract.address(),
+        provider,
+        signerAddress: notPermittedSigner.address,
+        silent: true,
+      });
+
+      try {
+        await _contract.vote({
+          choice: BigInt(0),
+          proposal: result,
+        });
+      } catch (error) {
+        expect((error as EthersError).code).toBe('CALL_EXCEPTION');
+        expect((error as CallExceptionError).reason).toBe(TOKEN_DOES_NOT_EXIST);
+
+        return;
+      }
+
+      throw new Error('expected token does not exist error');
+    });
+
+    it('should vote for a proposal', async () => {
+      const _contract = await Sigillum.init({
+        address: contract.address(),
+        provider,
+        signerAddress: tokenHolderSigner.address,
+        silent: true,
+      });
+      const start = new Date();
+
+      start.setSeconds(new Date().getSeconds() + 1); // 1 second later
+
+      const { result } = await _contract.propose({
+        duration: BigInt(86400), // 1 day
+        start: BigInt((start.getTime() / 1000).toFixed(0)),
+        title: 'Decree: Founding Of The Ordo Administratorum',
+      });
+
+      await wait(start.getTime() - new Date().getTime());
+
+      await _contract.vote({
+        choice: BigInt(0),
+        proposal: result,
+      });
     });
   });
 });

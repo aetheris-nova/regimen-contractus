@@ -17,7 +17,7 @@ import {
 import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
-import type { IContractMetadata, ISigillumContract } from '@client/types';
+import type { IContractMetadata, ISigillumContract, ITokenMetadata } from '@client/types';
 import { IDeployOptions, IInitOptions, INewOptions, IProposeOptions, IVoteOptions } from './types';
 
 export default class Sigillum {
@@ -108,7 +108,7 @@ export default class Sigillum {
    * @public
    */
   public address(): string {
-    return this._address;
+    return this._address.toLowerCase();
   }
 
   public async arbiter(): Promise<string> {
@@ -375,6 +375,27 @@ export default class Sigillum {
 
     try {
       return await this._contract.symbol();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the token metadata.
+   * @param {bigint} id - The token ID.
+   * @returns {Promise<ITokenMetadata>} A promise that resolves the token metadata.
+   * @public
+   */
+  public async tokenMetadata<Result = ITokenMetadata>(id: bigint): Promise<Result> {
+    const _functionName = 'tokenMetadata';
+
+    try {
+      const dataURI = await this._contract.tokenURI(id);
+      const decodedMetadata = decodeBase64(dataURI.split(',')[1]);
+
+      return JSON.parse(decodeUTF8(decodedMetadata));
     } catch (error) {
       this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
 

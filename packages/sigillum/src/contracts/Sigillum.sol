@@ -5,6 +5,7 @@ import { Arbiter } from '@aetherisnova/arbiter/Arbiter.sol';
 import { IArbiter } from '@aetherisnova/arbiter/IArbiter.sol';
 import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
 import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
+import { Strings } from 'openzeppelin-contracts/contracts/utils/Strings.sol';
 import { ERC721 } from 'solmate/tokens/ERC721.sol';
 
 contract Sigillum is ERC721, AccessControl {
@@ -48,7 +49,7 @@ contract Sigillum is ERC721, AccessControl {
             abi.encodePacked(
               '{',
               '"arbiter": "',
-              arbiter,
+              Strings.toHexString(arbiter),
               '",',
               '"description": "',
               description,
@@ -81,13 +82,13 @@ contract Sigillum is ERC721, AccessControl {
             abi.encodePacked(
               '{',
               '"arbiter": "',
-              arbiter,
+              Strings.toHexString(arbiter),
               '",',
               '"description": "',
               description,
               '",',
               '"id": ',
-              abi.encodePacked('0x', id),
+              Strings.toString(id),
               ',',
               '"name": "',
               name,

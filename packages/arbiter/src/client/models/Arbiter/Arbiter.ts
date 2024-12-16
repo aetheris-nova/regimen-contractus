@@ -111,7 +111,7 @@ export default class Arbiter {
    * @public
    */
   public address(): string {
-    return this._address;
+    return this._address.toLowerCase();
   }
 
   /**
