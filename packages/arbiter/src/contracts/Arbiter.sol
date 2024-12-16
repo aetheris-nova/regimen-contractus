@@ -5,6 +5,7 @@ import { IERC721 } from 'forge-std/interfaces/IERC721.sol';
 import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
 
 // contracts
+import { IProposal } from './IProposal.sol';
 import { Proposal } from './Proposal.sol';
 
 /**
@@ -19,7 +20,6 @@ contract Arbiter is AccessControl {
 
   // variables
   mapping(address => bool) internal _allowedTokens;
-  address internal _proposals;
 
   // events
   event ProposalCreated(address contractAddress, address proposer, uint48 start, uint32 duration);
@@ -92,5 +92,20 @@ contract Arbiter is AccessControl {
     _allowedTokens[token] = false;
 
     emit TokenRemoved(token);
+  }
+
+  /**
+   * @notice Votes for a proposal.
+   * @dev This can only be called from an allowed sigillum (token).
+   * @param voter The address of the voter.
+   * @param proposal The address of the proposal.
+   * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
+   */
+  function vote(address voter, address proposal, uint8 choice) external {
+    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+
+    IProposal proposalContract = IProposal(proposal);
+
+    proposalContract.vote(voter, choice);
   }
 }

@@ -1,16 +1,11 @@
 import type { ILogger, IStateChangeResult } from '_types';
 import { createLogger } from '_utils';
-import { decode as decodeBase64 } from '@stablelib/base64';
-import { decode as decodeUTF8 } from '@stablelib/utf8';
 import {
   BadDataError,
   BaseContract,
-  CallExceptionError,
   ContractFactory,
   ContractTransactionReceipt,
   type ContractTransactionResponse,
-  getBytes,
-  Log,
   makeError,
   Provider,
   Signer,
@@ -19,9 +14,6 @@ import {
 // artifacts
 import arbiterArtifact from '@dist/contracts/Arbiter.sol/Arbiter.json';
 import proposalArtifact from '@dist/contracts/Proposal.sol/Proposal.json';
-
-// errors
-import { PROPOSAL_DOES_NOT_EXIST } from '@client/constants';
 
 // types
 import type { IArbiterContract, IProposal, IProposalContract } from '@client/types';

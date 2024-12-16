@@ -181,4 +181,17 @@ contract Sigillum is ERC721, AccessControl {
 
     emit ArbiterUpdated(_arbiter);
   }
+
+  /**
+   * @notice Votes for a proposal. The sender **MUST** have a sigillum to be able to vote.
+   * @param proposal The address of the proposal.
+   * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
+   */
+  function vote(address proposal, uint8 choice) external {
+    require(balanceOf(msg.sender) != 0, 'TOKEN_DOES_NOT_EXIST');
+
+    IArbiter arbiterContract = IArbiter(arbiter);
+
+    arbiterContract.vote(msg.sender, proposal, choice);
+  }
 }

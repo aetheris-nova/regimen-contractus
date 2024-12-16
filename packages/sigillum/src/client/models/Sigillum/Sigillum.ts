@@ -18,7 +18,7 @@ import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
 import type { IContractMetadata, ISigillumContract } from '@client/types';
-import type { IDeployOptions, IInitOptions, INewOptions, IProposeOptions } from './types';
+import { IDeployOptions, IInitOptions, INewOptions, IProposeOptions, IVoteOptions } from './types';
 
 export default class Sigillum {
   protected _contract: ISigillumContract;
@@ -411,6 +411,36 @@ export default class Sigillum {
 
     try {
       return await this._contract.version();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Votes for a proposal.
+   * @param {IVoteOptions} options - The proposal contract address and a choice (Abstain = 0, Accept = 1, Reject = 2).
+   * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
+   * @public
+   */
+  public async vote({ choice, proposal }: IVoteOptions): Promise<IStateChangeResult<null>> {
+    const _functionName = 'vote';
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.vote(proposal, choice);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: null,
+        transaction: receipt,
+      };
     } catch (error) {
       this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
 

@@ -55,7 +55,9 @@ contract Proposal is Ownable {
 
   /**
    * @notice Updates the state of the proposal to `executed`.
-   * @dev A `ProposalExecuted()` event will be emitted. The proposal cannot be executed if it has been canceled.
+   * @dev
+   * * The proposal cannot be executed if it has been canceled.
+   * * If successful, a `ProposalExecuted()` event will be emitted.
    */
   function cancel() external onlyOwner {
     require(!details.executed, 'PROPOSAL_ALREADY_EXECUTED');
@@ -67,7 +69,9 @@ contract Proposal is Ownable {
 
   /**
    * @notice Updates the state of the proposal to `executed`.
-   * @dev A `ProposalExecuted()` event will be emitted. The proposal cannot be executed if it has been canceled.
+   * @dev
+   * * The proposal cannot be executed if it has been canceled.
+   * * If successful, a `ProposalExecuted()` event will be emitted.
    */
   function execute() external onlyOwner {
     require(!details.canceled, 'PROPOSAL_ALREADY_CANCELED');
@@ -79,8 +83,9 @@ contract Proposal is Ownable {
 
   /**
    * @notice Submits a vote to the proposal.
-   * @dev This will revert if the voter has already voted, i.e. the vote in the map is greater than `0`. A
-   * `Voted(address)` event will be emitted.
+   * @dev
+   * * This will revert if the voter has already voted.
+   * * If successful, a `Voted(address)` event will be emitted.
    * @param voter The address of the voter.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
