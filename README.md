@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://kibis.is">
+    <img alt="An ornate golden compass surrounded by orbs" src=".assets/aetheris_nova_emblem@128x128.png" style="padding-top: 15px" height="128" />
+  </a>
+</p>
+
 <h1 align="center">
   Regimen Contractus
 </h1>
