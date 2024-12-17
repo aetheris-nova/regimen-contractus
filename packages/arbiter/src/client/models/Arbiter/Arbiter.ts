@@ -145,16 +145,76 @@ export default class Arbiter {
   }
 
   /**
+   * Cancels a proposal.
+   * @param {string} proposal - The proposal's contract address.
+   * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
+   * @public
+   */
+  public async cancel(proposal: string): Promise<IStateChangeResult<null>> {
+    const _functionName = 'cancel';
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.cancel(proposal);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: null,
+        transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
    * Checks if a token is eligible to vote.
    * @param {string} token - The address of the token contract.
    * @returns {Promise<IStateChangeResult<boolean>>} A promise that resolves to the transaction and the result.
    * @public
    */
   public async eligibility(token: string): Promise<boolean> {
-    const _functionName = 'canVote';
+    const _functionName = 'eligibility';
 
     try {
       return await this._contract.eligibility(token);
+    } catch (error) {
+      this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Executes a proposal.
+   * @param {string} proposal - The proposal's contract address.
+   * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
+   * @public
+   */
+  public async execute(proposal: string): Promise<IStateChangeResult<null>> {
+    const _functionName = 'cancel';
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.execute(proposal);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: null,
+        transaction: receipt,
+      };
     } catch (error) {
       this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
 

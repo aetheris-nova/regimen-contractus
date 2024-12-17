@@ -18,6 +18,46 @@ contract ProposalTest is Test {
     );
   }
 
+  function test_AlreadyCanceled() public {
+    _contract.execute();
+
+    vm.expectRevert('PROPOSAL_ALREADY_EXECUTED');
+
+    _contract.cancel();
+  }
+
+  function test_AlreadyExecuted() public {
+    _contract.cancel();
+
+    vm.expectRevert('PROPOSAL_ALREADY_CANCELED');
+
+    _contract.execute();
+  }
+
+  function test_Cancel() public {
+    (bool canceled, , , , , ) = _contract.details();
+
+    assertFalse(canceled);
+
+    _contract.cancel();
+
+    (bool newCanceled, , , , , ) = _contract.details();
+
+    assertTrue(newCanceled);
+  }
+
+  function test_Execute() public {
+    (, , bool executed, , , ) = _contract.details();
+
+    assertFalse(executed);
+
+    _contract.execute();
+
+    (, , bool newExecuted, , , ) = _contract.details();
+
+    assertTrue(newExecuted);
+  }
+
   function test_VoteAbstain() public {
     assertEq(_contract.abstainVotes(), 0);
 
@@ -51,6 +91,22 @@ contract ProposalTest is Test {
 
     // attempt to vote again
     _contract.vote(address(1), 1);
+  }
+
+  function test_VoteAlreadyCanceled() public {
+    _contract.cancel();
+
+    vm.expectRevert('PROPOSAL_ALREADY_CANCELED');
+
+    _contract.vote(address(1), 0);
+  }
+
+  function test_VoteAlreadyExecuted() public {
+    _contract.execute();
+
+    vm.expectRevert('PROPOSAL_ALREADY_EXECUTED');
+
+    _contract.vote(address(1), 0);
   }
 
   function test_VoteChoiceOutOfBounds() public {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: CC0-1.0
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import { IERC721 } from 'forge-std/interfaces/IERC721.sol';
 import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
@@ -28,6 +28,7 @@ contract Arbiter is AccessControl {
 
   constructor() {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(EXECUTOR_ROLE, msg.sender);
   }
 
   /**
@@ -59,6 +60,28 @@ contract Arbiter is AccessControl {
     _allowedTokens[token] = true;
 
     emit TokenAdded(token);
+  }
+
+  /**
+   * @notice Cancels a proposal.
+   * @dev
+   * * Requires the `EXECUTOR_ROLE` permission.
+   */
+  function cancel(address proposal) external onlyRole(EXECUTOR_ROLE) {
+    IProposal proposalContract = IProposal(proposal);
+
+    proposalContract.cancel();
+  }
+
+  /**
+   * @notice Executes a proposal.
+   * @dev
+   * * Requires the `EXECUTOR_ROLE` permission.
+   */
+  function execute(address proposal) external onlyRole(EXECUTOR_ROLE) {
+    IProposal proposalContract = IProposal(proposal);
+
+    proposalContract.execute();
   }
 
   /**

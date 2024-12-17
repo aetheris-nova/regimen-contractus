@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: CC0-1.0
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import { Arbiter } from '@aetherisnova/arbiter/Arbiter.sol';
 import { IArbiter } from '@aetherisnova/arbiter/IArbiter.sol';
@@ -174,7 +174,8 @@ contract Sigillum is ERC721, AccessControl {
 
   /**
    * @notice Updates the arbiter contract that allows for submission of proposals and voting of proposals.
-   * @dev Emits an `ArbiterUpdated(address)` event.
+   * @dev
+   * * Emits an `ArbiterUpdated(address)` event.
    * @param _arbiter The new arbiter contract address.
    */
   function setArbiter(address _arbiter) external onlyRole(ISSUER_ROLE) {

@@ -1,5 +1,4 @@
 import { Sigillum } from '@aetherisnova/sigillum';
-import { randomBytes } from 'node:crypto';
 import { JsonRpcProvider, Wallet } from 'ethers';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
@@ -56,7 +55,7 @@ describe(Arbiter.name, () => {
     });
   });
 
-  describe.only('proposalByAddress()', () => {
+  describe('proposalByAddress()', () => {
     it('should return null if no proposal exists', async () => {
       const result = await contract.proposalByAddress(Wallet.createRandom(null).address);
 

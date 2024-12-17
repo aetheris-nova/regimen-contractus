@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: CC0-1.0
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import { Ownable } from 'openzeppelin-contracts/contracts/access/Ownable.sol';
 
@@ -62,9 +62,11 @@ contract Proposal is Ownable {
   function cancel() external onlyOwner {
     require(!details.executed, 'PROPOSAL_ALREADY_EXECUTED');
 
-    details.canceled = true;
+    if (!details.canceled) {
+      details.canceled = true;
 
-    emit ProposalCanceled();
+      emit ProposalCanceled();
+    }
   }
 
   /**
@@ -76,15 +78,19 @@ contract Proposal is Ownable {
   function execute() external onlyOwner {
     require(!details.canceled, 'PROPOSAL_ALREADY_CANCELED');
 
-    details.executed = true;
+    if (!details.executed) {
+      details.executed = true;
 
-    emit ProposalExecuted();
+      emit ProposalExecuted();
+    }
   }
 
   /**
    * @notice Submits a vote to the proposal.
    * @dev
    * * This will revert if the voter has already voted.
+   * * This will revert if the proposal has been canceled.
+   * * This will revert if the proposal has been executed.
    * * If successful, a `Voted(address)` event will be emitted.
    * @param voter The address of the voter.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
@@ -92,6 +98,8 @@ contract Proposal is Ownable {
   function vote(address voter, uint8 choice) external onlyOwner {
     require(!_votes[voter].voted, 'ALREADY_VOTED');
     require(choice <= 2, 'CHOICE_OUT_OF_BOUNDS');
+    require(!details.canceled, 'PROPOSAL_ALREADY_CANCELED');
+    require(!details.executed, 'PROPOSAL_ALREADY_EXECUTED');
 
     if (choice == 0) {
       abstainVotes = abstainVotes + 1;
