@@ -15,10 +15,10 @@
   ],
   "scripts": {
     "build": "pnpm run clean && vite build",
+    "build:dependencies": "./scripts/prebuild.sh",
     "clean": "shx rm -rf dist && shx rm -rf tsconfig.*.tsbuildinfo",
     "generate:index": "tsx ./scripts/generate-index.ts",
     "lint": "eslint .",
-    "prebuild": "./scripts/prebuild.sh",
     "prettier": "prettier --write \"**/*.{js,json,ts}\"",
     "test": "vitest run --config vitest.config.ts"
   },
