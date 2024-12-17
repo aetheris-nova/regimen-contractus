@@ -16,6 +16,7 @@
     "noImplicitThis": true,
     "paths": {
       "@client/constants": ["src/client/constants"],
+      "@client/enums": ["src/client/enums"],
       "@client/models/*": ["src/client/models/*"],
       "@client/types": ["src/client/types"],
 

@@ -18,7 +18,7 @@
     "clean": "shx rm -rf dist && shx rm -rf tsconfig.*.tsbuildinfo",
     "generate:index": "tsx ./scripts/generate-index.ts",
     "lint": "eslint .",
-    "prebuild": "exit 0",
+    "prebuild": "./scripts/prebuild.sh",
     "prettier": "prettier --write \"**/*.{js,json,ts}\"",
     "test": "vitest run --config vitest.config.ts"
   },

@@ -6,14 +6,19 @@ import {
   ContractFactory,
   ContractTransactionReceipt,
   type ContractTransactionResponse,
+  keccak256,
   makeError,
   Provider,
   Signer,
+  toUtf8Bytes,
 } from 'ethers';
 
 // artifacts
 import arbiterArtifact from '@dist/contracts/Arbiter.sol/Arbiter.json';
 import proposalArtifact from '@dist/contracts/Proposal.sol/Proposal.json';
+
+// enums
+import { Roles } from '@client/enums';
 
 // types
 import type { IArbiterContract, IProposal, IProposalContract } from '@client/types';
@@ -112,6 +117,36 @@ export default class Arbiter {
    */
   public address(): string {
     return this._address.toLowerCase();
+  }
+
+  /**
+   * Adds executor privileges for an address. Only admins can assign/remove executor privileges.
+   * @param {string} address - The address to add executor privileges for.
+   * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
+   * @public
+   */
+  public async addExecutor(address: string): Promise<IStateChangeResult<null>> {
+    const _functionName = 'addExecutor';
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.grantRole(keccak256(toUtf8Bytes(Roles.Executor)), address);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: null,
+        transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
+
+      throw error;
+    }
   }
 
   /**
@@ -223,6 +258,25 @@ export default class Arbiter {
   }
 
   /**
+   * Checks if an address has executor privileges.
+   * @param {string} address - The address to check.
+   * @returns {Promise<boolean>} A promise that resolves to true if the address has executor privileges, false
+   * otherwise.
+   * @public
+   */
+  public async isExecutor(address: string): Promise<boolean> {
+    const _functionName = 'isExecutor';
+
+    try {
+      return await this._contract.hasRole(keccak256(toUtf8Bytes(Roles.Executor)), address);
+    } catch (error) {
+      this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
    * Gets a proposal details by its contract address.
    * @param {string} address - The proposal's contract address.
    * @returns {Promise<IProposal | null>} A promise that resolves to the proposal or null if the proposal does not
@@ -250,6 +304,36 @@ export default class Arbiter {
         return null;
       }
 
+      this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Removes executor privileges for an address. Only admins can assign/remove executor privileges.
+   * @param {string} address - The address to removes executor privileges.
+   * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
+   * @public
+   */
+  public async removeExecutor(address: string): Promise<IStateChangeResult<null>> {
+    const _functionName = 'removeExecutor';
+    let response: ContractTransactionResponse;
+    let receipt: ContractTransactionReceipt | null;
+
+    try {
+      response = await this._contract.revokeRole(keccak256(toUtf8Bytes(Roles.Executor)), address);
+      receipt = await response.wait();
+
+      if (!receipt) {
+        throw makeError('transaction did not complete', 'UNKNOWN_ERROR');
+      }
+
+      return {
+        result: null,
+        transaction: receipt,
+      };
+    } catch (error) {
       this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
 
       throw error;

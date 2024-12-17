@@ -1,6 +1,7 @@
-import type { BaseContract, ContractTransactionResponse } from 'ethers';
+import type { IAccessControlContract } from '_types';
+import type { ContractTransactionResponse } from 'ethers';
 
-interface IArbiterContract extends BaseContract {
+interface IArbiterContract extends IAccessControlContract {
   readonly addToken: (token: string) => Promise<ContractTransactionResponse>;
   readonly cancel: (proposal: string) => Promise<ContractTransactionResponse>;
   readonly eligibility: (token: string) => Promise<boolean>;

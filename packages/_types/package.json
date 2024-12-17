@@ -17,7 +17,7 @@
     "clean": "shx rm -rf dist && shx rm -rf tsconfig.*.tsbuildinfo",
     "generate:index": "tsx ./scripts/generate-index.ts",
     "lint": "eslint .",
-    "prebuild": "./scripts/prebuild.sh",
+    "prebuild": "exit 0",
     "prettier": "prettier --write \"**/*.ts\"",
     "test": "exit 0"
   },

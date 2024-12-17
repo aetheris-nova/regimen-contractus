@@ -41,6 +41,21 @@ describe(Arbiter.name, () => {
     });
   });
 
+  describe('addExecutor()', () => {
+    it('should add executor privileges', async () => {
+      const account = Wallet.createRandom(provider);
+      let isExecutor = await contract.isExecutor(account.address);
+
+      expect(isExecutor).toBe(false);
+
+      await contract.addExecutor(account.address);
+
+      isExecutor = await contract.isExecutor(account.address);
+
+      expect(isExecutor).toBe(true);
+    });
+  });
+
   describe('addToken()', () => {
     it('should add a token to vote', async () => {
       let canVote = await contract.eligibility(tokenContract.address());
@@ -60,6 +75,28 @@ describe(Arbiter.name, () => {
       const result = await contract.proposalByAddress(Wallet.createRandom(null).address);
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe('removeExecutor()', () => {
+    it('should remove executor privileges', async () => {
+      // arrange
+      const account = Wallet.createRandom(provider);
+      let isExecutor: boolean;
+
+      await contract.addExecutor(account.address);
+
+      isExecutor = await contract.isExecutor(account.address);
+
+      expect(isExecutor).toBe(true);
+
+      // assert
+      await contract.removeExecutor(account.address);
+
+      // act
+      isExecutor = await contract.isExecutor(account.address);
+
+      expect(isExecutor).toBe(false);
     });
   });
 
