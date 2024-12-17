@@ -18,7 +18,7 @@ import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
 import type { IContractMetadata, ISigillumContract, ITokenMetadata } from '@client/types';
-import { IDeployOptions, IInitOptions, INewOptions, IProposeOptions, IVoteOptions } from './types';
+import type { IDeployOptions, IInitOptions, INewOptions, IProposeOptions, IVoteOptions } from './types';
 
 export default class Sigillum {
   protected _contract: ISigillumContract;

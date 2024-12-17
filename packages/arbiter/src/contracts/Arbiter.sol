@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.24;
 
-import { IERC721 } from 'forge-std/interfaces/IERC721.sol';
 import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
 
 // contracts

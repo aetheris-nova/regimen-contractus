@@ -24,14 +24,13 @@
     "lint": "concurrently --names \"CLIENT,CONTRACTS\" -c \"yellow.bold,magenta.bold\" \"pnpm lint:client\" \"pnpm lint:contracts\"",
     "lint:client": "eslint .",
     "lint:contracts": "solhint --config .solhint.json \"src/**/*.sol\"",
+    "prebuild": "./scripts/prebuild.sh",
     "prettier": "prettier --write \"**/*.{js,json,sol,ts}\"",
     "test": "pnpm test:contracts && pnpm test:client",
     "test:client": "pnpm -F @aetherisnova/sigillum build && pnpm build:contracts && vitest run --config vitest.config.ts",
     "test:contracts": "forge test"
   },
   "dependencies": {
-    "@stablelib/base64": "^2.0.0",
-    "@stablelib/utf8": "^2.0.0",
     "_types": "workspace:^",
     "_utils": "workspace:^"
   },

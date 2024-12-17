@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-# Public: A post-install script that is run from npm's `postinstall` script. This script will build the required
-# workspace dependencies.
+# Public: Performs pre-build actions such as building dependencies.
 #
 # Examples
 #
-#   ./bin/postinstall.sh
+#   ./bin/prebuild.sh
 #
 # Returns exit code 0.
 function main {
   # build workspace dependencies
   pnpm -F _types run build
   pnpm -F _utils run build
+  pnpm -F @aetherisnova/arbiter run build
 
   exit 0
 }

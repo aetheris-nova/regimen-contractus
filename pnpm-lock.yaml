@@ -135,12 +135,6 @@ importers:
 
   packages/arbiter:
     dependencies:
-      '@stablelib/base64':
-        specifier: ^2.0.0
-        version: 2.0.0
-      '@stablelib/utf8':
-        specifier: ^2.0.0
-        version: 2.0.0
       _types:
         specifier: workspace:^
         version: link:../_types

@@ -40,7 +40,7 @@ jobs:
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🏗️ Build"
         run: |
-          pnpm postinstall
+          pnpm -F ${{ inputs.package_name }} run prebuild
           pnpm -F ${{ inputs.package_name }} run build
 
   test:
@@ -56,7 +56,7 @@ jobs:
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🧪 Test"
         run: |
-          pnpm postinstall
+          pnpm -F ${{ inputs.package_name }} run prebuild
           pnpm -F ${{ inputs.package_name }} run test
 
   test_with_anvil:
@@ -74,6 +74,6 @@ jobs:
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🧪 Test"
         run: |
-          pnpm postinstall
+          pnpm -F ${{ inputs.package_name }} run prebuild
           pnpm -F ${{ inputs.package_name }} run build
           ./scripts/test_with_anvil.sh "${{ inputs.package_name }}"

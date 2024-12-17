@@ -26,7 +26,7 @@ jobs:
     with:
       package_dir: "_utils"
 
-  release_regimen:
+  release_arbiter:
     needs: [release_types, release_utils]
     name: "Release - @aetherisnova/arbiter"
     uses: ./.github/workflows/publish_release.yml
@@ -36,7 +36,7 @@ jobs:
       with_foundry: true
 
   release_sigillum:
-    needs: [release_types, release_utils, release_regimen]
+    needs: [release_types, release_utils, release_arbiter]
     name: "Release - @aetherisnova/sigillum"
     uses: ./.github/workflows/publish_release.yml
     with:

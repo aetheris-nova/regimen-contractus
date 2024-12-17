@@ -27,6 +27,7 @@ export default [
   },
   {
     rules: {
+      '@typescript-eslint/no-unused-expressions': 'warn',
       'prefer-const': 'off',
     },
   },

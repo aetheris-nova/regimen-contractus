@@ -13,7 +13,7 @@ on:
         type: string
       with_foundry:
         default: false
-        description: "Whether foundry is used to build and run tests."
+        description: "Whether foundry is used to build."
         required: false
         type: boolean
 
@@ -38,7 +38,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
       - name: "🏗️ Build"
         run:  |
-          pnpm postinstall
+          pnpm -F ${{ inputs.package_name }} run prebuild
           pnpm -F ${{ inputs.package_name }} run build
       - name: "📝 Create .npmrc"
         run: |
