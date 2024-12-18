@@ -1,4 +1,4 @@
-import type { ILogger, IStateChangeResult } from '_types';
+import type { ILogger, INewClientOptions, IStateChangeResult, TAttachClientOptions } from '_types';
 import { createLogger } from '_utils';
 import { decode as decodeBase64 } from '@stablelib/base64';
 import { decode as decodeUTF8 } from '@stablelib/utf8';
@@ -11,6 +11,7 @@ import {
   LogDescription,
   Signer,
   makeError,
+  Provider,
 } from 'ethers';
 
 // artifacts
@@ -18,24 +19,42 @@ import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
 import type { IContractMetadata, ISigillumContract, ITokenMetadata } from '@client/types';
-import type { IDeployOptions, IInitOptions, INewOptions, IProposeOptions, IVoteOptions } from './types';
+import type { IDeployOptions, IProposeOptions, IVoteOptions } from './types';
 
 export default class Sigillum {
   protected _contract: ISigillumContract;
   protected _debug: boolean;
   protected _address: string;
   protected readonly _logger: ILogger;
+  protected _provider: Provider;
 
-  private constructor({ address, contract, debug = false, logger }: INewOptions) {
+  private constructor({ address, contract, debug = false, logger, provider }: INewClientOptions<ISigillumContract>) {
     this._address = address;
     this._contract = contract;
     this._debug = debug;
     this._logger = logger;
+    this._provider = provider;
   }
 
   /**
    * public static methods
    */
+
+  public static async attach({
+    debug = false,
+    address,
+    provider,
+    signerAddress,
+    silent = false,
+  }: TAttachClientOptions): Promise<Sigillum> {
+    return new Sigillum({
+      address,
+      contract: new BaseContract(address, artifact.abi, await provider.getSigner(signerAddress)) as ISigillumContract,
+      debug,
+      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
+      provider,
+    });
+  }
 
   public static async deploy({
     arbiter,
@@ -75,27 +94,13 @@ export default class Sigillum {
         contract,
         debug,
         logger,
+        provider,
       });
     } catch (error) {
       logger.error(`${Sigillum.name}#${_functionName}: failed to deploy contract`, error);
 
       throw error;
     }
-  }
-
-  public static async init({
-    debug = false,
-    address,
-    provider,
-    signerAddress,
-    silent = false,
-  }: IInitOptions): Promise<Sigillum> {
-    return new Sigillum({
-      address,
-      contract: new BaseContract(address, artifact.abi, await provider.getSigner(signerAddress)) as ISigillumContract,
-      debug,
-      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
-    });
   }
 
   /**

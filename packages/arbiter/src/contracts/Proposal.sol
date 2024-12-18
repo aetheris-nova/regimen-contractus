@@ -117,4 +117,12 @@ contract Proposal is Ownable {
 
     emit Voted(voter);
   }
+
+  /**
+   * @notice Convenience function to get the vote results in one call.
+   * @return A tuple with the accept votes, abstain votes and reject votes, respectively.
+   */
+  function voteResults() external view returns (uint32, uint32, uint32) {
+    return (acceptVotes, abstainVotes, rejectVotes);
+  }
 }

@@ -1,14 +1,9 @@
-import type { JsonRpcProvider } from 'ethers';
+import type { TDeployClientOptions } from '_types';
 
-// types
-import type IBaseOptions from './IBaseOptions';
-
-interface IDeployOptions extends IBaseOptions {
+interface IDeployOptions extends TDeployClientOptions {
   arbiter: string;
   description: string;
   name: string;
-  provider: JsonRpcProvider;
-  signerAddress?: string;
   symbol: string;
 }
 

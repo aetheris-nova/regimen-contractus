@@ -1,4 +1,10 @@
-import type { ILogger, IStateChangeResult } from '_types';
+import type {
+  ILogger,
+  INewClientOptions,
+  IStateChangeResult,
+  TAttachClientOptions,
+  TDeployClientOptions,
+} from '_types';
 import { createLogger } from '_utils';
 import {
   BadDataError,
@@ -22,7 +28,6 @@ import { Roles } from '@client/enums';
 
 // types
 import type { IArbiterContract, IProposal, IProposalContract } from '@client/types';
-import type { IDeployOptions, IInitOptions, INewOptions } from './types';
 
 export default class Arbiter {
   protected _address: string;
@@ -31,7 +36,7 @@ export default class Arbiter {
   protected readonly _logger: ILogger;
   protected _provider: Provider;
 
-  private constructor({ address, contract, debug = false, logger, provider }: INewOptions) {
+  private constructor({ address, contract, debug = false, logger, provider }: INewClientOptions<IArbiterContract>) {
     this._address = address;
     this._contract = contract;
     this._debug = debug;
@@ -43,12 +48,32 @@ export default class Arbiter {
    * public static methods
    */
 
+  public static async attach({
+    debug = false,
+    address,
+    provider,
+    signerAddress,
+    silent = false,
+  }: TAttachClientOptions): Promise<Arbiter> {
+    return new Arbiter({
+      address,
+      contract: new BaseContract(
+        address,
+        arbiterArtifact.abi,
+        await provider.getSigner(signerAddress)
+      ) as IArbiterContract,
+      debug,
+      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
+      provider,
+    });
+  }
+
   public static async deploy({
     debug = false,
     provider,
     silent = false,
     signerAddress,
-  }: IDeployOptions): Promise<Arbiter> {
+  }: TDeployClientOptions): Promise<Arbiter> {
     const _functionName = 'deploy';
     const logger = createLogger(debug ? 'debug' : silent ? 'silent' : 'error');
     let contract: IArbiterContract;
@@ -84,26 +109,6 @@ export default class Arbiter {
 
       throw error;
     }
-  }
-
-  public static async init({
-    debug = false,
-    address,
-    provider,
-    signerAddress,
-    silent = false,
-  }: IInitOptions): Promise<Arbiter> {
-    return new Arbiter({
-      address,
-      contract: new BaseContract(
-        address,
-        arbiterArtifact.abi,
-        await provider.getSigner(signerAddress)
-      ) as IArbiterContract,
-      debug,
-      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
-      provider,
-    });
   }
 
   /**
@@ -363,6 +368,23 @@ export default class Arbiter {
         result: null,
         transaction: receipt,
       };
+    } catch (error) {
+      this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the version of the contract.
+   * @returns {Promise<string>} A promise that resolves to the version of the contract.
+   * @public
+   */
+  public async version(): Promise<string> {
+    const _functionName = 'version';
+
+    try {
+      return await this._contract.version();
     } catch (error) {
       this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
 

@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import { Test } from 'forge-std/Test.sol';
 
 // contracts
-import { Proposal } from '../src/contracts/Proposal.sol';
+import { Proposal } from '../../src/contracts/Proposal.sol';
 
 contract ProposalTest is Test {
   Proposal public _contract;

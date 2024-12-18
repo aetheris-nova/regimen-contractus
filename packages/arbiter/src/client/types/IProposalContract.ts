@@ -12,6 +12,13 @@ interface IProposalContract extends BaseContract {
     ]
   >;
   readonly version: () => Promise<string>;
+  readonly voteResults: () => Promise<
+    [
+      bigint, // accept
+      bigint, // abstain
+      bigint, // reject
+    ]
+  >;
 }
 
 export default IProposalContract;

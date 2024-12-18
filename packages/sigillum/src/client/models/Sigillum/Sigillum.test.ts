@@ -69,7 +69,7 @@ describe(Sigillum.name, () => {
 
   describe('burn()', () => {
     it('should throw and error if the issuer does not have permission to burn', async () => {
-      const _contract = await Sigillum.init({
+      const _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: notPermittedSigner.address,
@@ -138,7 +138,7 @@ describe(Sigillum.name, () => {
     });
 
     it('should throw and error if the issuer does not have permission to mint', async () => {
-      const _contract = await Sigillum.init({
+      const _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: notPermittedSigner.address,
@@ -175,7 +175,7 @@ describe(Sigillum.name, () => {
 
   describe('propose()', () => {
     it('should error when the sender is not a token holder', async () => {
-      const _contract = await Sigillum.init({
+      const _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: notPermittedSigner.address,
@@ -200,7 +200,7 @@ describe(Sigillum.name, () => {
     });
 
     it('should create a proposal', async () => {
-      const _contract = await Sigillum.init({
+      const _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: tokenHolderSigner.address,
@@ -260,7 +260,7 @@ describe(Sigillum.name, () => {
   describe('vote()', () => {
     it('should error when the sender is not a token holder', async () => {
       const start = new Date();
-      let _contract = await Sigillum.init({
+      let _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: tokenHolderSigner.address,
@@ -278,7 +278,7 @@ describe(Sigillum.name, () => {
       await wait(start.getTime() - new Date().getTime());
 
       // vote with a not permitted address
-      _contract = await Sigillum.init({
+      _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: notPermittedSigner.address,
@@ -301,7 +301,7 @@ describe(Sigillum.name, () => {
     });
 
     it('should vote for a proposal', async () => {
-      const _contract = await Sigillum.init({
+      const _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: tokenHolderSigner.address,

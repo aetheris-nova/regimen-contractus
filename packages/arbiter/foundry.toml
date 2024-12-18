@@ -7,3 +7,4 @@ libs = ["lib"]
 out = "dist/contracts"
 solc = "0.8.24"
 src = "src/contracts"
+test = "test/contracts"
