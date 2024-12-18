@@ -18,7 +18,7 @@ import {
 import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
-import type { IContractMetadata, ISigillumContract, ITokenMetadata } from '@client/types';
+import type { IContractMetadata, ISigillumContract, ITokenMetadata, IVoteResult } from '@client/types';
 import type { IDeployOptions, IProposeOptions, IVoteOptions } from './types';
 
 export default class Sigillum {
@@ -116,6 +116,11 @@ export default class Sigillum {
     return this._address.toLowerCase();
   }
 
+  /**
+   * Gets the arbiter contract.
+   * @returns {string} The arbiter contract address.
+   * @public
+   */
   public async arbiter(): Promise<string> {
     const _functionName = 'arbiter';
 
@@ -196,11 +201,40 @@ export default class Sigillum {
     }
   }
 
+  /**
+   * Gets the description of the token.
+   * @returns {Promise<string>} A promise that resolves to the description of the token.
+   * @public
+   */
   public async description(): Promise<string> {
     const _functionName = 'description';
 
     try {
       return await this._contract.description();
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the vote for a given `proposal`.
+   * @param {string} proposal - The address of the proposal.
+   * @returns {Promise<IVoteResult>} A promise that resolves to the vote result for the proposal.
+   * @public
+   */
+  public async hasVoted(proposal: string): Promise<IVoteResult> {
+    const _functionName = 'hasVoted';
+
+    try {
+      const [choice, voted] = await this._contract.hasVoted(proposal);
+
+      return {
+        choice: Number(choice),
+        proposal,
+        voted,
+      };
     } catch (error) {
       this._logger.error(`${Sigillum.name}#${_functionName}:`, error);
 
@@ -262,6 +296,11 @@ export default class Sigillum {
     }
   }
 
+  /**
+   * Gets the name of the token.
+   * @returns {Promise<string>} A promise that resolves to the name of the token.
+   * @public
+   */
   public async name(): Promise<string> {
     const _functionName = 'name';
 
@@ -375,6 +414,11 @@ export default class Sigillum {
     }
   }
 
+  /**
+   * Gets the symbol for the token.
+   * @returns {Promise<string>} A promise that resolves to the symbol of the token.
+   * @public
+   */
   public async symbol(): Promise<string> {
     const _functionName = 'symbol';
 
@@ -456,7 +500,7 @@ export default class Sigillum {
     let receipt: ContractTransactionReceipt | null;
 
     try {
-      response = await this._contract.vote(proposal, choice);
+      response = await this._contract.vote(proposal, BigInt(choice));
       receipt = await response.wait();
 
       if (!receipt) {

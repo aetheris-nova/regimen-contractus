@@ -16,11 +16,13 @@
     "noImplicitThis": true,
     "paths": {
       "@client/constants": ["src/client/constants"],
+      "@client/enums": ["src/client/enums"],
       "@client/models/*": ["src/client/models/*"],
       "@client/types": ["src/client/types"],
 
       "@dist/*": ["dist/*"],
-      "@test/utils": ["test/client/utils"]
+
+      "@test/utils/*": ["test/client/utils/*"]
     },
     "removeComments": false,
     "resolveJsonModule": true,

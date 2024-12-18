@@ -7,7 +7,6 @@ import type {
 } from '_types';
 import { createLogger } from '_utils';
 import {
-  BadDataError,
   BaseContract,
   ContractFactory,
   ContractTransactionReceipt,
@@ -21,13 +20,12 @@ import {
 
 // artifacts
 import arbiterArtifact from '@dist/contracts/Arbiter.sol/Arbiter.json';
-import proposalArtifact from '@dist/contracts/Proposal.sol/Proposal.json';
 
 // enums
 import { Roles } from '@client/enums';
 
 // types
-import type { IArbiterContract, IProposal, IProposalContract } from '@client/types';
+import type { IArbiterContract } from '@client/types';
 
 export default class Arbiter {
   protected _address: string;
@@ -275,40 +273,6 @@ export default class Arbiter {
     try {
       return await this._contract.hasRole(keccak256(toUtf8Bytes(Roles.Executor)), address);
     } catch (error) {
-      this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
-
-      throw error;
-    }
-  }
-
-  /**
-   * Gets a proposal details by its contract address.
-   * @param {string} address - The proposal's contract address.
-   * @returns {Promise<IProposal | null>} A promise that resolves to the proposal or null if the proposal does not
-   * exist.
-   * @public
-   */
-  public async proposalByAddress(address: string): Promise<IProposal | null> {
-    const _functionName = 'proposalByAddress';
-    const proposalContract = new BaseContract(address, proposalArtifact.abi, this._provider) as IProposalContract;
-
-    try {
-      const [canceled, duration, executed, proposer, start, title] = await proposalContract.details();
-
-      return {
-        canceled,
-        duration,
-        executed,
-        id: address,
-        proposer,
-        start,
-        title,
-      };
-    } catch (error) {
-      if ((error as BadDataError).code === 'BAD_DATA') {
-        return null;
-      }
-
       this._logger.error(`${Arbiter.name}#${_functionName}:`, error);
 
       throw error;

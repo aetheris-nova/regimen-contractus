@@ -1,9 +1,10 @@
 // enums
 import { VoteChoiceEnum } from '@client/enums';
 
-interface IVoteOptions {
+interface IVoteResult {
   choice: VoteChoiceEnum;
   proposal: string;
+  voted: boolean;
 }
 
-export default IVoteOptions;
+export default IVoteResult;

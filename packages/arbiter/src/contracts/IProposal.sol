@@ -2,7 +2,8 @@
 pragma solidity ^0.8.24;
 
 interface IProposal {
-  function execute() external;
   function cancel() external;
+  function execute() external;
+  function hasVoted(address voter) external view returns (uint8, bool);
   function vote(address voter, uint8 choice) external;
 }

@@ -18,7 +18,7 @@ contract Proposal is Ownable {
     string title;
   }
   struct Vote {
-    uint8 vote; // Abstain = 0, Accept = 1, Reject = 2
+    uint8 vote; // abstain = 0, accept = 1, reject = 2
     bool voted;
   }
 
@@ -45,6 +45,20 @@ contract Proposal is Ownable {
    * external functions - read
    */
 
+  /**
+   * @notice Gets the vote status for a given `voter`.
+   * @dev
+   * * This *MUST* be called from the `Arbiter` contract.
+   * @return The vote for the `voter`.
+   */
+  function hasVoted(address voter) external view onlyOwner returns (Vote memory) {
+    return _votes[voter];
+  }
+
+  /**
+   * @notice Gets the version of the contract.
+   * @return The version of the contract.
+   */
   function version() external pure returns (string memory) {
     return '1';
   }
@@ -56,6 +70,7 @@ contract Proposal is Ownable {
   /**
    * @notice Updates the state of the proposal to `executed`.
    * @dev
+   * * This *MUST* be called from the `Arbiter` contract.
    * * The proposal cannot be executed if it has been canceled.
    * * If successful, a `ProposalExecuted()` event will be emitted.
    */
@@ -72,6 +87,7 @@ contract Proposal is Ownable {
   /**
    * @notice Updates the state of the proposal to `executed`.
    * @dev
+   * * This *MUST* be called from the `Arbiter` contract.
    * * The proposal cannot be executed if it has been canceled.
    * * If successful, a `ProposalExecuted()` event will be emitted.
    */
@@ -88,12 +104,13 @@ contract Proposal is Ownable {
   /**
    * @notice Submits a vote to the proposal.
    * @dev
+   * * This *MUST* be called from the `Arbiter` contract.
    * * This will revert if the voter has already voted.
    * * This will revert if the proposal has been canceled.
    * * This will revert if the proposal has been executed.
    * * If successful, a `Voted(address)` event will be emitted.
    * @param voter The address of the voter.
-   * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
+   * @param choice The choice of the voter. Should be one of: abstain = 0, accept = 1, reject = 2.
    */
   function vote(address voter, uint8 choice) external onlyOwner {
     require(!_votes[voter].voted, 'ALREADY_VOTED');

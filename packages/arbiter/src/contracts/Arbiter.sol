@@ -15,6 +15,7 @@ import { Proposal } from './Proposal.sol';
  */
 contract Arbiter is AccessControl {
   // roles
+  bytes32 public constant CUSTODIAN_ROLE = keccak256('CUSTODIAN_ROLE');
   bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
 
   // variables
@@ -27,6 +28,7 @@ contract Arbiter is AccessControl {
 
   constructor() {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(CUSTODIAN_ROLE, msg.sender);
     _grantRole(EXECUTOR_ROLE, msg.sender);
   }
 
@@ -43,6 +45,26 @@ contract Arbiter is AccessControl {
     return _allowedTokens[token];
   }
 
+  /**
+   * @notice Gets the vote for a given `proposal` and `voter`.
+   * @dev
+   * * This can only be called from an allowed sigillum (token).
+   * @param proposal The proposal to check.
+   * @param voter The address of the voter.
+   * @return Whether the `voter` has voted and what choice they made.
+   */
+  function hasVoted(address proposal, address voter) external view returns (uint8, bool) {
+    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+
+    IProposal proposalContract = IProposal(proposal);
+
+    return proposalContract.hasVoted(voter);
+  }
+
+  /**
+   * @notice Gets the version of the contract.
+   * @return The version of the contract.
+   */
   function version() external pure returns (string memory) {
     return '1';
   }
@@ -53,9 +75,11 @@ contract Arbiter is AccessControl {
 
   /**
    * @notice Sanctions a token to allow an account in possession of the token to vote.
+   * @dev
+   * * **MUST** have the `CUSTODIAN_ROLE`.
    * @param token The token address to add.
    */
-  function addToken(address token) external {
+  function addToken(address token) external onlyRole(CUSTODIAN_ROLE) {
     _allowedTokens[token] = true;
 
     emit TokenAdded(token);
@@ -64,7 +88,7 @@ contract Arbiter is AccessControl {
   /**
    * @notice Cancels a proposal.
    * @dev
-   * * Requires the `EXECUTOR_ROLE` permission.
+   * * **MUST** have the `EXECUTOR_ROLE`.
    */
   function cancel(address proposal) external onlyRole(EXECUTOR_ROLE) {
     IProposal proposalContract = IProposal(proposal);
@@ -75,7 +99,7 @@ contract Arbiter is AccessControl {
   /**
    * @notice Executes a proposal.
    * @dev
-   * * Requires the `EXECUTOR_ROLE` permission.
+   * * **MUST** have the `EXECUTOR_ROLE`.
    */
   function execute(address proposal) external onlyRole(EXECUTOR_ROLE) {
     IProposal proposalContract = IProposal(proposal);
@@ -86,7 +110,9 @@ contract Arbiter is AccessControl {
   /**
    * @notice Allows a token to submit a proposal. If the token is not part of the allowed tokens, i.e. not a member of
    * the ordos, they will not be able to submit a proposal.
-   * @dev This will deploy a new proposal contract with the arbiter as owner.
+   * @dev
+   * * This can only be called from an allowed sigillum (token).
+   * * This will deploy a new proposal contract with the arbiter (this contract) as owner.
    * @param proposer The address of the proposer; the token holder.
    * @param title The title of the proposal. Must be less that 256 characters.
    * @param start The timestamp (in seconds) of when the voting will start. Must be now, or a future date.
@@ -108,9 +134,11 @@ contract Arbiter is AccessControl {
 
   /**
    * @notice Removes the ability for a token to vote.
+   * @dev
+   * * **MUST** have the `CUSTODIAN_ROLE`.
    * @param token The token address to remove.
    */
-  function removeToken(address token) external {
+  function removeToken(address token) external onlyRole(CUSTODIAN_ROLE) {
     _allowedTokens[token] = false;
 
     emit TokenRemoved(token);
@@ -118,7 +146,8 @@ contract Arbiter is AccessControl {
 
   /**
    * @notice Votes for a proposal.
-   * @dev This can only be called from an allowed sigillum (token).
+   * @dev
+   * * This can only be called from an allowed sigillum (token).
    * @param voter The address of the voter.
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.

@@ -70,14 +70,6 @@ describe(Arbiter.name, () => {
     });
   });
 
-  describe('proposalByAddress()', () => {
-    it('should return null if no proposal exists', async () => {
-      const result = await contract.proposalByAddress(Wallet.createRandom(null).address);
-
-      expect(result).toBeNull();
-    });
-  });
-
   describe('removeExecutor()', () => {
     it('should remove executor privileges', async () => {
       // arrange

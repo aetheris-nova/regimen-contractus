@@ -1,16 +1,22 @@
-import { Arbiter } from '@aetherisnova/arbiter';
+import { Arbiter, Proposal } from '@aetherisnova/arbiter';
 import { type CallExceptionError, type EthersError, JsonRpcProvider, Wallet } from 'ethers';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 
 // constants
 import { RECIPIENT_ALREADY_HAS_TOKEN, TOKEN_DOES_NOT_EXIST } from '@client/constants';
 
+// enums
+import { VoteChoiceEnum } from '@client/enums';
+
 // models
 import Sigillum from './Sigillum';
 
+// types
+import { ITokenMetadata, IVoteResult } from '@client/types';
+
 // utils
-import { wait } from '@test/utils';
-import ITokenMetadata from '../../types/ITokenMetadata';
+import createProposal from '@test/utils/createProposal';
+import wait from '@test/utils/wait';
 
 describe(Sigillum.name, () => {
   const description = 'The Sigillum that proves membership to the Ordo Administratorum.';
@@ -125,6 +131,78 @@ describe(Sigillum.name, () => {
     expect(result.symbol).toBe(symbol);
   });
 
+  describe('hasVoted()', () => {
+    it('should return empty vote results', async () => {
+      const start = new Date();
+      let _contract: Sigillum;
+      let proposal: Proposal;
+      let voteResult: IVoteResult;
+
+      start.setSeconds(new Date().getSeconds() + 1); // 1 second later
+
+      proposal = await createProposal({
+        contractAddress: contract.address(),
+        duration: BigInt(86400), // 1 day
+        provider,
+        start: BigInt((start.getTime() / 1000).toFixed(0)),
+        signerAddress: tokenHolderSigner.address,
+        title: 'Decree: Founding Of The Ordo Administratorum',
+      });
+      _contract = await Sigillum.attach({
+        address: contract.address(),
+        provider,
+        signerAddress: tokenHolderSigner.address,
+        silent: true,
+      });
+
+      await wait(start.getTime() - new Date().getTime());
+
+      voteResult = await _contract.hasVoted(proposal.address());
+
+      expect(voteResult.choice).toBe(VoteChoiceEnum.Abstain);
+      expect(voteResult.proposal).toBe(proposal.address());
+      expect(voteResult.voted).toBe(false);
+    });
+
+    it('should return the vote results', async () => {
+      const choice = VoteChoiceEnum.Accept;
+      const start = new Date();
+      let _contract: Sigillum;
+      let proposal: Proposal;
+      let voteResult: IVoteResult;
+
+      start.setSeconds(new Date().getSeconds() + 1); // 1 second later
+
+      proposal = await createProposal({
+        contractAddress: contract.address(),
+        duration: BigInt(86400), // 1 day
+        provider,
+        start: BigInt((start.getTime() / 1000).toFixed(0)),
+        signerAddress: tokenHolderSigner.address,
+        title: 'Decree: Founding Of The Ordo Administratorum',
+      });
+      _contract = await Sigillum.attach({
+        address: contract.address(),
+        provider,
+        signerAddress: tokenHolderSigner.address,
+        silent: true,
+      });
+
+      await wait(start.getTime() - new Date().getTime());
+
+      await _contract.vote({
+        choice,
+        proposal: proposal.address(),
+      });
+
+      voteResult = await _contract.hasVoted(proposal.address());
+
+      expect(voteResult.choice).toBe(choice);
+      expect(voteResult.proposal).toBe(proposal.address());
+      expect(voteResult.voted).toBe(true);
+    });
+  });
+
   describe('mint()', () => {
     it('should mint a new token', async () => {
       const recipient = Wallet.createRandom(provider);
@@ -200,31 +278,24 @@ describe(Sigillum.name, () => {
     });
 
     it('should create a proposal', async () => {
-      const _contract = await Sigillum.attach({
-        address: contract.address(),
-        provider,
-        signerAddress: tokenHolderSigner.address,
-        silent: true,
-      });
       const now = new Date();
       const duration = BigInt(86400); // 1 day
       const start = BigInt((new Date().setDate(now.getDate() + 1) / 1000).toFixed(0)); // 24 hours later
       const title = 'Decree: Founding Of The Ordo Administratorum';
-      const result = await _contract.propose({
+      const proposal = await createProposal({
+        contractAddress: contract.address(),
         duration,
+        provider,
         start,
+        signerAddress: tokenHolderSigner.address,
         title,
       });
-      const proposal = await arbiterContract.proposalByAddress(result.result);
+      const details = await proposal.details();
 
-      if (!proposal) {
-        throw new Error(`proposal "${result.result}" not found`);
-      }
-
-      expect(proposal.duration).toEqual(duration);
-      expect(proposal.proposer).toBe(tokenHolderSigner.address);
-      expect(proposal.start).toEqual(start);
-      expect(proposal.title).toBe(title);
+      expect(details.duration).toEqual(duration);
+      expect(details.proposer).toBe(tokenHolderSigner.address);
+      expect(details.start).toEqual(start);
+      expect(details.title).toBe(title);
     });
   });
 
@@ -260,18 +331,17 @@ describe(Sigillum.name, () => {
   describe('vote()', () => {
     it('should error when the sender is not a token holder', async () => {
       const start = new Date();
-      let _contract = await Sigillum.attach({
-        address: contract.address(),
-        provider,
-        signerAddress: tokenHolderSigner.address,
-        silent: true,
-      });
+      let _contract: Sigillum;
+      let proposal: Proposal;
 
       start.setSeconds(new Date().getSeconds() + 1); // 1 second later
 
-      const { result } = await _contract.propose({
+      proposal = await createProposal({
+        contractAddress: contract.address(),
         duration: BigInt(86400), // 1 day
+        provider,
         start: BigInt((start.getTime() / 1000).toFixed(0)),
+        signerAddress: tokenHolderSigner.address,
         title: 'Decree: Founding Of The Ordo Administratorum',
       });
 
@@ -287,8 +357,8 @@ describe(Sigillum.name, () => {
 
       try {
         await _contract.vote({
-          choice: BigInt(0),
-          proposal: result,
+          choice: VoteChoiceEnum.Accept,
+          proposal: proposal.address(),
         });
       } catch (error) {
         expect((error as EthersError).code).toBe('CALL_EXCEPTION');
@@ -301,27 +371,32 @@ describe(Sigillum.name, () => {
     });
 
     it('should vote for a proposal', async () => {
-      const _contract = await Sigillum.attach({
+      const start = new Date();
+      let _contract: Sigillum;
+      let proposal: Proposal;
+
+      start.setSeconds(new Date().getSeconds() + 1); // 1 second later
+
+      proposal = await createProposal({
+        contractAddress: contract.address(),
+        duration: BigInt(86400), // 1 day
+        provider,
+        start: BigInt((start.getTime() / 1000).toFixed(0)),
+        signerAddress: tokenHolderSigner.address,
+        title: 'Decree: Founding Of The Ordo Administratorum',
+      });
+      _contract = await Sigillum.attach({
         address: contract.address(),
         provider,
         signerAddress: tokenHolderSigner.address,
         silent: true,
       });
-      const start = new Date();
-
-      start.setSeconds(new Date().getSeconds() + 1); // 1 second later
-
-      const { result } = await _contract.propose({
-        duration: BigInt(86400), // 1 day
-        start: BigInt((start.getTime() / 1000).toFixed(0)),
-        title: 'Decree: Founding Of The Ordo Administratorum',
-      });
 
       await wait(start.getTime() - new Date().getTime());
 
       await _contract.vote({
-        choice: BigInt(0),
-        proposal: result,
+        choice: VoteChoiceEnum.Accept,
+        proposal: proposal.address(),
       });
     });
   });

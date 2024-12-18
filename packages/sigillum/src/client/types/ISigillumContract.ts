@@ -5,6 +5,12 @@ interface ISigillumContract extends BaseContract {
   readonly burn: (id: bigint) => Promise<ContractTransactionResponse>;
   readonly contractURI: () => Promise<string>;
   readonly description: () => Promise<string>;
+  readonly hasVoted: (proposal: string) => Promise<
+    [
+      bigint, // choice
+      boolean, // voted
+    ]
+  >;
   readonly mint: (recipient: string) => Promise<ContractTransactionResponse>;
   readonly name: () => Promise<string>;
   readonly propose: (title: string, start: bigint, duration: bigint) => Promise<ContractTransactionResponse>;

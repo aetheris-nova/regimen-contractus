@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import { Arbiter } from '@aetherisnova/arbiter/Arbiter.sol';
 import { IArbiter } from '@aetherisnova/arbiter/IArbiter.sol';
+import { IProposal } from '@aetherisnova/arbiter/IProposal.sol';
 import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
 import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
 import { Strings } from 'openzeppelin-contracts/contracts/utils/Strings.sol';
@@ -67,6 +68,21 @@ contract Sigillum is ERC721, AccessControl {
       );
   }
 
+  /**
+   * @notice Gets the vote for a given `proposal`.
+   * @dev
+   * * Sender **MUST** be a token holder.
+   * @param proposal The proposal to check.
+   * @return Whether the sender has voted and what choice they made.
+   */
+  function hasVoted(address proposal) external view returns (uint8, bool) {
+    require(balanceOf(msg.sender) != 0, 'TOKEN_DOES_NOT_EXIST');
+
+    IArbiter arbiterContract = IArbiter(arbiter);
+
+    return arbiterContract.hasVoted(proposal, msg.sender);
+  }
+
   function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, ERC721) returns (bool) {
     return super.supportsInterface(interfaceId);
   }
@@ -103,6 +119,10 @@ contract Sigillum is ERC721, AccessControl {
       );
   }
 
+  /**
+   * @notice Gets the version of the contract.
+   * @return The version of the contract.
+   */
   function version() external pure returns (string memory) {
     return '1';
   }
@@ -114,9 +134,9 @@ contract Sigillum is ERC721, AccessControl {
   /**
    * @notice Burns a token.
    * @dev
-   * * Emits a `Transfer(address,address,uint256)` event, where the `to` address is a zero address.
+   * * **MUST** have the `ISSUER_ROLE`.
    * * This will error if the token does not exist.
-   * * The sender **MUST** have the ISSUER_ROLE.
+   * * Emits a `Transfer(address,address,uint256)` event, where the `to` address is a zero address.
    * @param id The ID of the token to burn.
    */
   function burn(uint256 id) external onlyRole(ISSUER_ROLE) {
@@ -130,9 +150,9 @@ contract Sigillum is ERC721, AccessControl {
   /**
    * @notice Mints a new token.
    * @dev
-   * * Emits a `Transfer(address,address,uint256)` event, where the `from` address is a zero address.
+   * * **MUST** have the `ISSUER_ROLE`.
    * * This will error if the recipient already has a token.
-   * * The sender **MUST** have the ISSUER_ROLE.
+   * * Emits a `Transfer(address,address,uint256)` event, where the `from` address is a zero address.
    * @param recipient The recipient of the token.
    * @return The token ID.
    */
@@ -153,7 +173,9 @@ contract Sigillum is ERC721, AccessControl {
 
   /**
    * @notice Calls the arbiter contract and submits the proposal.
-   * @dev Emits a `ProposalCreated(address,address,uint48,uint32)` event.
+   * @dev
+   * * Sender **MUST** be a token holder.
+   * * Emits a `ProposalCreated(address,address,uint48,uint32)` event.
    * @param title The title of the proposal. Must be less that 256 characters.
    * @param start The timestamp (in seconds) of when the voting will start. Must be now, or a future date.
    * @param duration The length of time the voting for the proposal will last.
@@ -175,6 +197,7 @@ contract Sigillum is ERC721, AccessControl {
   /**
    * @notice Updates the arbiter contract that allows for submission of proposals and voting of proposals.
    * @dev
+   * * **MUST** have the `ISSUER_ROLE`.
    * * Emits an `ArbiterUpdated(address)` event.
    * @param _arbiter The new arbiter contract address.
    */
@@ -185,7 +208,9 @@ contract Sigillum is ERC721, AccessControl {
   }
 
   /**
-   * @notice Votes for a proposal. The sender **MUST** have a sigillum to be able to vote.
+   * @notice Votes for a proposal.
+   * @dev
+   * * Sender **MUST** be a token holder.
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
