@@ -1,4 +1,4 @@
-import packageJSON from './package.json';
+import packageJSON from './package.json' assert { type: 'json' };
 
 /**
  * @type {import('semantic-release').GlobalConfig}
