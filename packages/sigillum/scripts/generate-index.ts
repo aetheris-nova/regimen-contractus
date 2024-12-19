@@ -31,6 +31,7 @@ function main(): void {
 
   // add miscellaneous
   exports.push(`export * from './constants';`);
+  exports.push(`export * from './enums';`);
   exports.push(`export * from './types';`);
 
   indexFilePath = join(srcDir, 'index.ts');

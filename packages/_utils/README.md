@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://kibis.is">
+    <img alt="The TypeScript logo - a rounded corner blue square with a 'TS' in white" src="../../.assets/typescript_logo@128x128.png" style="padding-top: 15px" height="128" />
+  </a>
+</p>
+
 <h1 align="center">
   Internal TypeScript Utilities
 </h1>

@@ -11,8 +11,7 @@
     "pnpm": ">=9"
   },
   "scripts": {
-    "prepare": "husky",
-    "postinstall": "./scripts/postinstall.sh"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",
