@@ -16,6 +16,9 @@ on:
         description: "Whether foundry is used to build."
         required: false
         type: boolean
+    secrets:
+      NPM_TOKEN:
+        required: true
 
 permissions:
   contents: write # to be able to publish a github release

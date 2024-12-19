@@ -38,6 +38,8 @@ jobs:
       package_dir: "arbiter"
       package_name: "@aetherisnova/arbiter"
       with_foundry: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release_sigillum:
     needs: [release_types, release_utils, release_arbiter]
@@ -47,3 +49,5 @@ jobs:
       package_dir: "sigillum"
       package_name: "@aetherisnova/sigillum"
       with_foundry: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
