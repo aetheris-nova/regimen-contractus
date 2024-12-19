@@ -11,7 +11,6 @@ on:
 permissions:
   contents: write # to be able to publish a github release
   issues: write # to be able to comment on released issues
-  packages: write  # to be able to publish packages
   pull-requests: write # to be able to comment on released pull requests
 
 jobs:
@@ -22,11 +21,6 @@ jobs:
     steps:
       - name: "🛎 Checkout"
         uses: actions/checkout@v4
-      - name: "📝 Create .npmrc"
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
-          echo "@aetherisnova:registry=https://registry.npmjs.org" >> .npmrc
-          echo "access=public" >> .npmrc
       - name: "🔧 Setup"
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🔖 Release"

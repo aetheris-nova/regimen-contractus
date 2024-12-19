@@ -12,6 +12,7 @@ jobs:
     outputs:
       _types: ${{ steps.filter.outputs._types }}
       _utils: ${{ steps.filter.outputs._utils }}
+      arbiter: ${{ steps.filter.outputs.arbiter }}
       sigillum: ${{ steps.filter.outputs.sigillum }}
     steps:
       - name: "📥 Filter"
@@ -23,6 +24,8 @@ jobs:
               - 'packages/_types/**'
             _utils:
               - 'packages/_utils/**'
+            arbiter:
+              - 'packages/arbiter/**'
             sigillum:
               - 'packages/sigillum/**'
 
@@ -68,6 +71,15 @@ jobs:
     uses: ./.github/workflows/lint_build_test.yml
     with:
       package_name: "_utils"
+
+  lint_build_test_arbiter:
+    name: "Lint, Build & Test - @aetherisnova/arbiter"
+    needs: [changed_files, validate_pr_title]
+    if: ${{ needs.changed_files.outputs.arbiter == 'true' }}
+    uses: ./.github/workflows/lint_build_test.yml
+    with:
+      package_name: "@aetherisnova/arbiter"
+      with_foundry: true
 
   lint_build_test_sigillum:
     name: "Lint, Build & Test - @aetherisnova/sigillum"

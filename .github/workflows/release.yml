@@ -13,14 +13,6 @@ permissions:
   pull-requests: write # to be able to comment on released pull requests
 
 jobs:
-  release_sigillum:
-    name: "Release - @aetherisnova/sigillum"
-    uses: ./.github/workflows/publish_release.yml
-    with:
-      package_dir: "sigillum"
-      package_name: "@aetherisnova/sigillum"
-      with_foundry: true
-
   release_types:
     name: "Release - _types"
     uses: ./.github/workflows/internal_release.yml
@@ -28,7 +20,26 @@ jobs:
       package_dir: "_types"
 
   release_utils:
+    needs: [release_types]
     name: "Release - _utils"
     uses: ./.github/workflows/internal_release.yml
     with:
       package_dir: "_utils"
+
+  release_arbiter:
+    needs: [release_types, release_utils]
+    name: "Release - @aetherisnova/arbiter"
+    uses: ./.github/workflows/publish_release.yml
+    with:
+      package_dir: "arbiter"
+      package_name: "@aetherisnova/arbiter"
+      with_foundry: true
+
+  release_sigillum:
+    needs: [release_types, release_utils, release_arbiter]
+    name: "Release - @aetherisnova/sigillum"
+    uses: ./.github/workflows/publish_release.yml
+    with:
+      package_dir: "sigillum"
+      package_name: "@aetherisnova/sigillum"
+      with_foundry: true

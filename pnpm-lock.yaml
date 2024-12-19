@@ -133,6 +133,70 @@ importers:
         specifier: ^2.1.8
         version: 2.1.8(@types/node@22.10.1)
 
+  packages/arbiter:
+    dependencies:
+      _types:
+        specifier: workspace:^
+        version: link:../_types
+      _utils:
+        specifier: workspace:^
+        version: link:../_utils
+    devDependencies:
+      '@aetherisnova/sigillum':
+        specifier: workspace:^
+        version: link:../sigillum
+      '@types/node':
+        specifier: ^22.10.1
+        version: 22.10.1
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
+      concurrently:
+        specifier: ^9.1.0
+        version: 9.1.0
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
+      eslint:
+        specifier: ^9.16.0
+        version: 9.16.0(jiti@1.21.6)
+      eslint-config-prettier:
+        specifier: ^9.1.0
+        version: 9.1.0(eslint@9.16.0(jiti@1.21.6))
+      ethers:
+        specifier: ^6.13.4
+        version: 6.13.4
+      globals:
+        specifier: ^15.13.0
+        version: 15.13.0
+      prettier-plugin-solidity:
+        specifier: ^1.4.1
+        version: 1.4.1(prettier@3.4.2)
+      solhint:
+        specifier: ^5.0.3
+        version: 5.0.3(typescript@5.7.2)
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
+      typescript-eslint:
+        specifier: ^8.18.0
+        version: 8.18.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.7.2)
+      vite:
+        specifier: ^6.0.3
+        version: 6.0.3(@types/node@22.10.1)(jiti@1.21.6)(tsx@4.19.2)(yaml@2.5.1)
+      vite-plugin-dts:
+        specifier: ^4.3.0
+        version: 4.3.0(@types/node@22.10.1)(rollup@4.28.1)(typescript@5.7.2)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(tsx@4.19.2)(yaml@2.5.1))
+      vite-tsconfig-paths:
+        specifier: ^5.1.4
+        version: 5.1.4(typescript@5.7.2)(vite@6.0.3(@types/node@22.10.1)(jiti@1.21.6)(tsx@4.19.2)(yaml@2.5.1))
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.8(@types/node@22.10.1)
+
   packages/sigillum:
     dependencies:
       '@stablelib/base64':
@@ -148,6 +212,9 @@ importers:
         specifier: workspace:^
         version: link:../_utils
     devDependencies:
+      '@aetherisnova/arbiter':
+        specifier: workspace:^
+        version: link:../arbiter
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1

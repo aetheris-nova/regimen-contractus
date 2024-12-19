@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://kibis.is">
+    <img alt="An ornate golden compass surrounded by orbs" src=".assets/aetheris_nova_emblem@128x128.png" style="padding-top: 15px" height="128" />
+  </a>
+</p>
+
 <h1 align="center">
   Regimen Contractus
 </h1>
@@ -80,11 +86,12 @@ pnpm install
 
 ### 3.1. Packages
 
-| Name                                        | Visibility | Description                                             |
-|---------------------------------------------|------------|---------------------------------------------------------|
-| [`_types`](./packages/_types/README.md)     | `private`  | TypeScript types for the contract clients.              |
-| [`_utils`](./packages/_utils/README.md)     | `private`  | TypeScript utilities for the contract clients.          |
-| [`sigillum`](./packages/sigillum/README.md) | `public`   | The basic smart contract for the Ordos membership NFTs. |
+| Name                                        | Visibility | Description                                                                                         |
+|---------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|
+| [`_types`](./packages/_types/README.md)     | `private`  | TypeScript types for the contract clients.                                                          |
+| [`_utils`](./packages/_utils/README.md)     | `private`  | TypeScript utilities for the contract clients.                                                      |
+| [`arbiter`](./packages/arbiter/README.md)   | `public`   | A smart contract that can create proposals and allows eligible sigillums to vote for the proposals. |
+| [`sigillum`](./packages/sigillum/README.md) | `public`   | The basic smart contract for the Ordos membership NFTs.                                             |
 
 <sup>[Back to top ^][table-of-contents]</sup>
 
