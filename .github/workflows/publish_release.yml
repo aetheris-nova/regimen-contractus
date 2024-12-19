@@ -31,6 +31,11 @@ jobs:
     steps:
       - name: "🛎 Checkout"
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # use the entire git history for semantic-release to analyze history
+          submodules: recursive # ensure the git submodules are fetched
+      - name: "⤵️ Pull Latest Changes"
+        run: git pull origin ${{ github.ref_name }}
       - name: "🔧 Setup"
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "🔧 Setup Foundry"

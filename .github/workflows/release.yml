@@ -6,6 +6,10 @@ on:
       - beta
       - main
 
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: true # ensure only one release workflow runs per branch (e.g., "release-beta" or "release-main")
+
 permissions:
   contents: write # to be able to publish a github release
   issues: write # to be able to comment on released issues

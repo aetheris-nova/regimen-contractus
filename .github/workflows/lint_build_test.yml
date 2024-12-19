@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: "🛎 Checkout"
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: "🔧 Setup"
         uses: ./.github/actions/use-pnpm-dependencies
       - name: "👕 Lint"
