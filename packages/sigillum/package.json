@@ -32,10 +32,10 @@
     "test:contracts": "exit 0"
   },
   "dependencies": {
-    "@stablelib/base64": "^2.0.0",
-    "@stablelib/utf8": "^2.0.0",
     "@aetherisnova/regimen-contractus-types": "workspace:^",
-    "@aetherisnova/regimen-contractus-utils": "workspace:^"
+    "@aetherisnova/regimen-contractus-utils": "workspace:^",
+    "@stablelib/base64": "^2.0.0",
+    "@stablelib/utf8": "^2.0.0"
   },
   "devDependencies": {
     "@aetherisnova/arbiter": "workspace:^",
@@ -59,9 +59,5 @@
   },
   "peerDependencies": {
     "ethers": "^6.13.4"
-  },
-  "bundledDependencies": [
-    "@aetherisnova/regimen-contractus-types",
-    "@aetherisnova/regimen-contractus-utils"
-  ]
+  }
 }

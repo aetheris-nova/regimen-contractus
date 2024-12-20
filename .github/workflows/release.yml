@@ -17,18 +17,25 @@ permissions:
   pull-requests: write # to be able to comment on released pull requests
 
 jobs:
+
   release_types:
     name: "Release - @aetherisnova/regimen-contractus-types"
-    uses: ./.github/workflows/internal_release.yml
+    uses: ./.github/workflows/publish_release.yml
     with:
       package_dir: "types"
+      package_name: "@aetherisnova/regimen-contractus-types"
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release_utils:
     needs: [release_types]
     name: "Release - @aetherisnova/regimen-contractus-utils"
-    uses: ./.github/workflows/internal_release.yml
+    uses: ./.github/workflows/publish_release.yml
     with:
       package_dir: "utils"
+      package_name: "@aetherisnova/regimen-contractus-utils"
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release_arbiter:
     needs: [release_types, release_utils]

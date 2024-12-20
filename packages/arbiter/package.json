@@ -57,9 +57,5 @@
   },
   "peerDependencies": {
     "ethers": "^6.13.4"
-  },
-  "bundledDependencies": [
-    "@aetherisnova/regimen-contractus-types",
-    "@aetherisnova/regimen-contractus-utils"
-  ]
+  }
 }

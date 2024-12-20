@@ -1,7 +1,7 @@
 {
   "name": "@aetherisnova/regimen-contractus-utils",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "description": "TypeScript utilities for the contract clients.",
   "repository": {
     "type": "git",
