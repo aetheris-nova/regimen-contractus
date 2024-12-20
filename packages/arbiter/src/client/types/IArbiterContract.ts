@@ -1,4 +1,4 @@
-import type { IAccessControlContract } from '_types';
+import type { IAccessControlContract } from '@aetherisnova/regimen-contractus-types';
 import type { ContractTransactionResponse } from 'ethers';
 
 interface IArbiterContract extends IAccessControlContract {

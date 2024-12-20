@@ -1,5 +1,5 @@
-import type { ILogger, INewClientOptions, TAttachClientOptions } from '_types';
-import { createLogger } from '_utils';
+import type { ILogger, INewClientOptions, TAttachClientOptions } from '@aetherisnova/regimen-contractus-types';
+import { createLogger } from '@aetherisnova/regimen-contractus-utils';
 import { BaseContract, Provider } from 'ethers';
 
 // artifacts

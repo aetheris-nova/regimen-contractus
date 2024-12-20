@@ -9,7 +9,7 @@
 # Returns exit code 0.
 function main {
   # build workspace dependencies
-  pnpm -F _types run build
+  pnpm -F @aetherisnova/regimen-contractus-types run build
 
   exit 0
 }

@@ -1,5 +1,6 @@
 {
-  "name": "_utils",
+  "name": "@aetherisnova/regimen-contractus-utils",
+  "version": "1.0.0",
   "private": true,
   "description": "TypeScript utilities for the contract clients.",
   "repository": {
@@ -23,7 +24,7 @@
     "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
-    "_types": "workspace:^"
+    "@aetherisnova/regimen-contractus-types": "workspace:^"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
@@ -39,6 +40,5 @@
     "vite-plugin-dts": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8"
-  },
-  "version": "1.0.0-beta.1"
+  }
 }

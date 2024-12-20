@@ -18,17 +18,17 @@ permissions:
 
 jobs:
   release_types:
-    name: "Release - _types"
+    name: "Release - @aetherisnova/regimen-contractus-types"
     uses: ./.github/workflows/internal_release.yml
     with:
-      package_dir: "_types"
+      package_dir: "types"
 
   release_utils:
     needs: [release_types]
-    name: "Release - _utils"
+    name: "Release - @aetherisnova/regimen-contractus-utils"
     uses: ./.github/workflows/internal_release.yml
     with:
-      package_dir: "_utils"
+      package_dir: "utils"
 
   release_arbiter:
     needs: [release_types, release_utils]

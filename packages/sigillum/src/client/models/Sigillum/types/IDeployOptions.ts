@@ -1,4 +1,4 @@
-import type { TDeployClientOptions } from '_types';
+import type { TDeployClientOptions } from '@aetherisnova/regimen-contractus-types';
 
 interface IDeployOptions extends TDeployClientOptions {
   arbiter: string;

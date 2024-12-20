@@ -1,5 +1,6 @@
 {
   "name": "@aetherisnova/arbiter",
+  "version": "1.0.0",
   "private": false,
   "description": "The Arbiter schema facilitates the submission of proposals and allows for members of the Ordos to pledge their support.",
   "repository": {
@@ -31,8 +32,8 @@
     "test:contracts": "forge test"
   },
   "dependencies": {
-    "_types": "workspace:^",
-    "_utils": "workspace:^"
+    "@aetherisnova/regimen-contractus-types": "workspace:^",
+    "@aetherisnova/regimen-contractus-utils": "workspace:^"
   },
   "devDependencies": {
     "@aetherisnova/sigillum": "workspace:^",
@@ -57,5 +58,8 @@
   "peerDependencies": {
     "ethers": "^6.13.4"
   },
-  "version": "1.0.0-beta.1"
+  "bundledDependencies": [
+    "@aetherisnova/regimen-contractus-types",
+    "@aetherisnova/regimen-contractus-utils"
+  ]
 }

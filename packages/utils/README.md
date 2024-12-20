@@ -29,7 +29,7 @@
 
 You can install the types using:
 ```shell
-pnpm add _utils
+pnpm add @aetherisnova/regimen-contractus-utils
 ```
 
 <sup>[Back to top ^][table-of-contents]</sup>

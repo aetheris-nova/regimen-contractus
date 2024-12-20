@@ -4,8 +4,8 @@ import type {
   IStateChangeResult,
   TAttachClientOptions,
   TDeployClientOptions,
-} from '_types';
-import { createLogger } from '_utils';
+} from '@aetherisnova/regimen-contractus-types';
+import { createLogger } from '@aetherisnova/regimen-contractus-utils';
 import {
   BaseContract,
   ContractFactory,

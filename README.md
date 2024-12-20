@@ -88,10 +88,10 @@ pnpm install
 
 | Name                                        | Visibility | Description                                                                                         |
 |---------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|
-| [`_types`](./packages/_types/README.md)     | `private`  | TypeScript types for the contract clients.                                                          |
-| [`_utils`](./packages/_utils/README.md)     | `private`  | TypeScript utilities for the contract clients.                                                      |
 | [`arbiter`](./packages/arbiter/README.md)   | `public`   | A smart contract that can create proposals and allows eligible sigillums to vote for the proposals. |
 | [`sigillum`](./packages/sigillum/README.md) | `public`   | The basic smart contract for the Ordos membership NFTs.                                             |
+| [`types`](./packages/types/README.md)       | `private`  | TypeScript types for the contract clients.                                                          |
+| [`utils`](./packages/utils/README.md)       | `private`  | TypeScript utilities for the contract clients.                                                      |
 
 <sup>[Back to top ^][table-of-contents]</sup>
 

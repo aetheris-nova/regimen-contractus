@@ -1,4 +1,4 @@
-import type { ILogger, TLogLevel } from '_types';
+import type { ILogger, TLogLevel } from '@aetherisnova/regimen-contractus-types';
 
 /**
  * Creates a logger that can set whether the logs appear based on the level.

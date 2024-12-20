@@ -1,5 +1,10 @@
-import type { ILogger, INewClientOptions, IStateChangeResult, TAttachClientOptions } from '_types';
-import { createLogger } from '_utils';
+import type {
+  ILogger,
+  INewClientOptions,
+  IStateChangeResult,
+  TAttachClientOptions,
+} from '@aetherisnova/regimen-contractus-types';
+import { createLogger } from '@aetherisnova/regimen-contractus-utils';
 import { decode as decodeBase64 } from '@stablelib/base64';
 import { decode as decodeUTF8 } from '@stablelib/utf8';
 import {
