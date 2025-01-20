@@ -1,15 +1,19 @@
-<p align="center">
-  <a href="https://kibis.is">
-    <img alt="The TypeScript logo - a rounded corner blue square with a 'TS' in white" src="../../.assets/typescript_logo@128x128.png" style="padding-top: 15px" height="128" />
-  </a>
-</p>
+<div align="center">
+    <img alt="The TypeScript logo - a rounded corner blue square with a 'TS' in white" src="docs/images/icon@128x128.png" height="64" />
+</div>
+
+<div align="center">
+
+[![License: CC0-1.0](https://img.shields.io/badge/License-CC0_1.0-brightgreen.svg)](./LICENSE)
+
+</div>
 
 <h1 align="center">
-  Internal TypeScript Types
+  Regimen Contractus - TypeScript Types
 </h1>
 
 <p align="center">
-  TypeScript types for the contract clients.
+  TypeScript types for the Regimen Contractus clients.
 </p>
 
 ### Table Of Contents

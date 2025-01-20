@@ -1,8 +1,16 @@
-<p align="center">
-  <a href="https://kibis.is">
-    <img alt="An ornate golden compass surrounded by orbs" src="../../.assets/aetheris_nova_emblem@128x128.png" style="padding-top: 15px" height="128" />
+<div align="center">
+  <a href="https://aetherisnova.org" target="_blank">
+    <img alt="An ornate golden compass surrounded by orbs" src="docs/images/emblem@128x128.png" height="128" />
   </a>
-</p>
+</div>
+
+<div align="center">
+
+[![License: CC0-1.0](https://img.shields.io/badge/License-CC0_1.0-brightgreen.svg)](./LICENSE)
+[![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Fsigillum)](https://www.npmjs.com/package/%40aetherisnova/sigillum)
+![GitHub Release](https://img.shields.io/github/v/release/aetheris-nova/regimen-contractus?filter=%40aetherisnova%2Fsigillum*)
+
+</div>
 
 <h1 align="center">
   Regimen Contractus - Sigillum
@@ -11,6 +19,8 @@
 <p align="center">
   The Sigillum schema underpins the basic features of the sigillum for each Ordo.
 </p>
+
+---
 
 ### Table Of Contents
 

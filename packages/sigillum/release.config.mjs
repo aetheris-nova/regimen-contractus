@@ -16,7 +16,7 @@ export default {
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
     '@semantic-release/changelog',
-    '@semantic-release/npm',
+    '@anolilab/semantic-release-pnpm',
     [
       '@semantic-release/git',
       {

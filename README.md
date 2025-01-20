@@ -1,8 +1,8 @@
-<p align="center">
-  <a href="https://kibis.is">
-    <img alt="An ornate golden compass surrounded by orbs" src=".assets/aetheris_nova_emblem@128x128.png" style="padding-top: 15px" height="128" />
+<div align="center">
+  <a href="https://aetherisnova.org" target="_blank">
+    <img alt="An ornate golden compass surrounded by orbs" src="docs/images/emblem@128x128.png" height="64" />
   </a>
-</p>
+</div>
 
 <h1 align="center">
   Regimen Contractus
@@ -11,6 +11,8 @@
 <p align="center">
   The Regimen Contractus of Aetheris Nova is the vault to the schemas that enact the will of the Aetherii.
 </p>
+
+---
 
 ### Table Of Contents
 
@@ -86,12 +88,12 @@ pnpm install
 
 ### 3.1. Packages
 
-| Name                                        | Visibility | Description                                                                                         |
-|---------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|
-| [`arbiter`](./packages/arbiter/README.md)   | `public`   | A smart contract that can create proposals and allows eligible sigillums to vote for the proposals. |
-| [`sigillum`](./packages/sigillum/README.md) | `public`   | The basic smart contract for the Ordos membership NFTs.                                             |
-| [`types`](./packages/types/README.md)       | `private`  | TypeScript types for the contract clients.                                                          |
-| [`utils`](./packages/utils/README.md)       | `private`  | TypeScript utilities for the contract clients.                                                      |
+| Name                                        | Visibility | Description                                                                                         | Package                                                                                                                           |
+|---------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| [`arbiter`](./packages/arbiter/README.md)   | `public`   | A smart contract that can create proposals and allows eligible sigillums to vote for the proposals. | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Farbiter)](https://www.npmjs.com/package/%40aetherisnova/arbiter)   |
+| [`sigillum`](./packages/sigillum/README.md) | `public`   | The basic smart contract for the Ordos membership NFTs.                                             | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Fsigillum)](https://www.npmjs.com/package/%40aetherisnova/sigillum) |
+| [`types`](./packages/types/README.md)       | `private`  | TypeScript types for the contract clients.                                                          | -                                                                                                                                 |
+| [`utils`](./packages/utils/README.md)       | `private`  | TypeScript utilities for the contract clients.                                                      | -                                                                                                                                 |
 
 <sup>[Back to top ^][table-of-contents]</sup>
 
