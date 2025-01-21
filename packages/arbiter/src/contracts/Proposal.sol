@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.24;
 
-import { Ownable } from 'openzeppelin-contracts/contracts/access/Ownable.sol';
+import { Ownable } from '@openzeppelin-contracts/access/Ownable.sol';
 
 /**
  * @title Proposal
