@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://aetherisnova.org" target="_blank">
-    <img alt="An ornate golden compass surrounded by orbs" src="docs/images/emblem@128x128.png" height="128" />
+    <img alt="An ornate golden compass surrounded by orbs" src="docs/images/emblem@128x128.png" height="64" />
   </a>
 </p>
 

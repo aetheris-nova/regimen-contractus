@@ -4,9 +4,9 @@ pragma solidity ^0.8.24;
 import { Arbiter } from '@aetherisnova/arbiter/Arbiter.sol';
 import { IArbiter } from '@aetherisnova/arbiter/IArbiter.sol';
 import { IProposal } from '@aetherisnova/arbiter/IProposal.sol';
-import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
-import { Base64 } from 'openzeppelin-contracts/contracts/utils/Base64.sol';
-import { Strings } from 'openzeppelin-contracts/contracts/utils/Strings.sol';
+import { AccessControl } from '@openzeppelin-contracts/access/AccessControl.sol';
+import { Base64 } from '@openzeppelin-contracts/utils/Base64.sol';
+import { Strings } from '@openzeppelin-contracts/utils/Strings.sol';
 import { ERC721 } from 'solmate/tokens/ERC721.sol';
 
 contract Sigillum is ERC721, AccessControl {
