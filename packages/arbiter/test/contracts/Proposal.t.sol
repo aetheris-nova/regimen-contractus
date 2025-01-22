@@ -8,6 +8,8 @@ import { Proposal } from '../../src/contracts/Proposal.sol';
 
 contract ProposalTest is Test {
   Proposal public _contract;
+  address _token;
+  uint256 _tokenID;
 
   function setUp() public {
     _contract = new Proposal(
@@ -16,6 +18,8 @@ contract ProposalTest is Test {
       uint48(block.timestamp),
       84000
     );
+    _token = address(2);
+    _tokenID = uint256(4);
   }
 
   function test_AlreadyCanceled() public {
@@ -61,7 +65,7 @@ contract ProposalTest is Test {
   function test_VoteAbstain() public {
     assertEq(_contract.abstainVotes(), 0);
 
-    _contract.vote(address(1), 0);
+    _contract.vote(_token, _tokenID, 0);
 
     assertEq(_contract.abstainVotes(), 1);
   }
@@ -69,7 +73,7 @@ contract ProposalTest is Test {
   function test_VoteAccept() public {
     assertEq(_contract.acceptVotes(), 0);
 
-    _contract.vote(address(1), 1);
+    _contract.vote(_token, _tokenID, 1);
 
     assertEq(_contract.acceptVotes(), 1);
   }
@@ -77,20 +81,20 @@ contract ProposalTest is Test {
   function test_VoteReject() public {
     assertEq(_contract.rejectVotes(), 0);
 
-    _contract.vote(address(1), 2);
+    _contract.vote(_token, _tokenID, 2);
 
     assertEq(_contract.rejectVotes(), 1);
   }
 
   function test_AlreadyVoted() public {
-    _contract.vote(address(1), 0);
+    _contract.vote(_token, _tokenID, 0);
 
     assertEq(_contract.abstainVotes(), 1);
 
     vm.expectRevert('ALREADY_VOTED');
 
     // attempt to vote again
-    _contract.vote(address(1), 1);
+    _contract.vote(_token, _tokenID, 1);
   }
 
   function test_VoteAlreadyCanceled() public {
@@ -98,7 +102,7 @@ contract ProposalTest is Test {
 
     vm.expectRevert('PROPOSAL_ALREADY_CANCELED');
 
-    _contract.vote(address(1), 0);
+    _contract.vote(_token, _tokenID, 0);
   }
 
   function test_VoteAlreadyExecuted() public {
@@ -106,12 +110,12 @@ contract ProposalTest is Test {
 
     vm.expectRevert('PROPOSAL_ALREADY_EXECUTED');
 
-    _contract.vote(address(1), 0);
+    _contract.vote(_token, _tokenID, 0);
   }
 
   function test_VoteChoiceOutOfBounds() public {
     vm.expectRevert('CHOICE_OUT_OF_BOUNDS');
 
-    _contract.vote(address(1), 10);
+    _contract.vote(_token, _tokenID, 10);
   }
 }

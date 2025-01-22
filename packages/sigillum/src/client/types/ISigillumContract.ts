@@ -5,7 +5,11 @@ interface ISigillumContract extends BaseContract {
   readonly burn: (id: bigint) => Promise<ContractTransactionResponse>;
   readonly contractURI: () => Promise<string>;
   readonly description: () => Promise<string>;
-  readonly hasVoted: (proposal: string) => Promise<
+  readonly hasVoted: (
+    token: string,
+    tokenID: bigint,
+    proposal: string
+  ) => Promise<
     [
       bigint, // choice
       boolean, // voted
@@ -19,7 +23,7 @@ interface ISigillumContract extends BaseContract {
   readonly symbol: () => Promise<string>;
   readonly tokenURI: (id: bigint) => Promise<string>;
   readonly version: () => Promise<string>;
-  readonly vote: (proposal: string, choice: bigint) => Promise<ContractTransactionResponse>;
+  readonly vote: (tokenID: bigint, proposal: string, choice: bigint) => Promise<ContractTransactionResponse>;
 }
 
 export default ISigillumContract;

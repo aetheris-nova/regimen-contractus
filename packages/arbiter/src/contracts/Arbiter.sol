@@ -46,19 +46,20 @@ contract Arbiter is AccessControl {
   }
 
   /**
-   * @notice Gets the vote for a given `proposal` and `voter`.
+   * @notice Gets the vote for a given token and proposal.
    * @dev
    * * This can only be called from an allowed sigillum (token).
+   * @param token The address of the token.
+   * @param tokenID The id of the voter's token.
    * @param proposal The proposal to check.
-   * @param voter The address of the voter.
-   * @return Whether the `voter` has voted and what choice they made.
+   * @return Whether the token has voted and what choice they made.
    */
-  function hasVoted(address proposal, address voter) external view returns (uint8, bool) {
+  function hasVoted(address token, uint256 tokenID, address proposal) external view returns (uint8, bool) {
     require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
 
     IProposal proposalContract = IProposal(proposal);
 
-    return proposalContract.hasVoted(voter);
+    return proposalContract.hasVoted(token, tokenID);
   }
 
   /**
@@ -148,15 +149,15 @@ contract Arbiter is AccessControl {
    * @notice Votes for a proposal.
    * @dev
    * * This can only be called from an allowed sigillum (token).
-   * @param voter The address of the voter.
+   * @param tokenID The id of the voter's token.
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
-  function vote(address voter, address proposal, uint8 choice) external {
+  function vote(uint256 tokenID, address proposal, uint8 choice) external {
     require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
 
     IProposal proposalContract = IProposal(proposal);
 
-    proposalContract.vote(voter, choice);
+    proposalContract.vote(msg.sender, tokenID, choice);
   }
 }

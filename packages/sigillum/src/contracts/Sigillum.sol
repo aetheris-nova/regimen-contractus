@@ -210,15 +210,16 @@ contract Sigillum is ERC721, AccessControl {
   /**
    * @notice Votes for a proposal.
    * @dev
-   * * Sender **MUST** be a token holder.
+   * * Sender **MUST** be the token holder.
+   * @param id The token ID.
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
-  function vote(address proposal, uint8 choice) external {
-    require(balanceOf(msg.sender) != 0, 'TOKEN_DOES_NOT_EXIST');
+  function vote(uint256 tokenID, address proposal, uint8 choice) external {
+    require(_ownerOf[tokenID] == msg.sender, 'NOT_OWNER_OF_TOKEN');
 
     IArbiter arbiterContract = IArbiter(arbiter);
 
-    arbiterContract.vote(msg.sender, proposal, choice);
+    arbiterContract.vote(tokenID, proposal, choice);
   }
 }

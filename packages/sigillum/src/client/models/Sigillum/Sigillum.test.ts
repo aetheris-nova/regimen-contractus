@@ -3,7 +3,7 @@ import { type CallExceptionError, type EthersError, JsonRpcProvider, Wallet } fr
 import { beforeAll, describe, expect, it, test } from 'vitest';
 
 // constants
-import { RECIPIENT_ALREADY_HAS_TOKEN, TOKEN_DOES_NOT_EXIST } from '@client/constants';
+import { NOT_OWNER_OF_TOKEN, RECIPIENT_ALREADY_HAS_TOKEN, TOKEN_DOES_NOT_EXIST } from '@client/constants';
 
 // enums
 import { VoteChoiceEnum } from '@client/enums';
@@ -27,6 +27,7 @@ describe(Sigillum.name, () => {
   let deployerSigner: Wallet;
   let notPermittedSigner: Wallet;
   let tokenHolderSigner: Wallet;
+  let tokenHolderTokenID: bigint;
   let provider: JsonRpcProvider;
 
   beforeAll(async () => {
@@ -70,7 +71,9 @@ describe(Sigillum.name, () => {
     // add the token contract to the arbiter contract
     await arbiterContract.addToken(contract.address());
     // mint a token holder
-    await contract.mint(tokenHolderSigner.address);
+    const { result } = await contract.mint(tokenHolderSigner.address);
+
+    tokenHolderTokenID = result;
   }, 60000);
 
   describe('burn()', () => {
@@ -157,7 +160,10 @@ describe(Sigillum.name, () => {
 
       await wait(start.getTime() - new Date().getTime());
 
-      voteResult = await _contract.hasVoted(proposal.address());
+      voteResult = await _contract.hasVoted({
+        proposal: proposal.address(),
+        tokenID: tokenHolderTokenID,
+      });
 
       expect(voteResult.choice).toBe(VoteChoiceEnum.Abstain);
       expect(voteResult.proposal).toBe(proposal.address());
@@ -193,9 +199,13 @@ describe(Sigillum.name, () => {
       await _contract.vote({
         choice,
         proposal: proposal.address(),
+        tokenID: tokenHolderTokenID,
       });
 
-      voteResult = await _contract.hasVoted(proposal.address());
+      voteResult = await _contract.hasVoted({
+        proposal: proposal.address(),
+        tokenID: tokenHolderTokenID,
+      });
 
       expect(voteResult.choice).toBe(choice);
       expect(voteResult.proposal).toBe(proposal.address());
@@ -359,10 +369,11 @@ describe(Sigillum.name, () => {
         await _contract.vote({
           choice: VoteChoiceEnum.Accept,
           proposal: proposal.address(),
+          tokenID: tokenHolderTokenID, // use a token that is not owned by the token signer
         });
       } catch (error) {
         expect((error as EthersError).code).toBe('CALL_EXCEPTION');
-        expect((error as CallExceptionError).reason).toBe(TOKEN_DOES_NOT_EXIST);
+        expect((error as CallExceptionError).reason).toBe(NOT_OWNER_OF_TOKEN);
 
         return;
       }
@@ -397,6 +408,7 @@ describe(Sigillum.name, () => {
       await _contract.vote({
         choice: VoteChoiceEnum.Accept,
         proposal: proposal.address(),
+        tokenID: tokenHolderTokenID,
       });
     });
   });

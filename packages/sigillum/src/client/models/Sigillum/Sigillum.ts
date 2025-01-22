@@ -24,7 +24,7 @@ import artifact from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
 import type { IContractMetadata, ISigillumContract, ITokenMetadata, IVoteResult } from '@client/types';
-import type { IDeployOptions, IProposeOptions, IVoteOptions } from './types';
+import type { IDeployOptions, IHasVotedOptions, IProposeOptions, IVoteOptions } from './types';
 
 export default class Sigillum {
   protected _contract: ISigillumContract;
@@ -71,7 +71,7 @@ export default class Sigillum {
     signerAddress,
     symbol,
   }: IDeployOptions): Promise<Sigillum> {
-    const _functionName = 'deploy';
+    const __function = 'deploy';
     const logger = createLogger(debug ? 'debug' : silent ? 'silent' : 'error');
     let contract: ISigillumContract;
     let contractFactory: ContractFactory;
@@ -91,7 +91,7 @@ export default class Sigillum {
 
       debug &&
         logger.debug(
-          `${Sigillum.name}#${_functionName}: deployed contract using "${creatorAddress}" with transaction hash "${deployTransaction?.hash ?? '-'}" on chain "${deployTransaction?.chainId ?? '-'}"`
+          `${Sigillum.name}#${__function}: deployed contract using "${creatorAddress}" with transaction hash "${deployTransaction?.hash ?? '-'}" on chain "${deployTransaction?.chainId ?? '-'}"`
         );
 
       return new Sigillum({
@@ -102,7 +102,7 @@ export default class Sigillum {
         provider,
       });
     } catch (error) {
-      logger.error(`${Sigillum.name}#${_functionName}: failed to deploy contract`, error);
+      logger.error(`${Sigillum.name}#${__function}: failed to deploy contract`, error);
 
       throw error;
     }
@@ -225,15 +225,15 @@ export default class Sigillum {
 
   /**
    * Gets the vote for a given `proposal`.
-   * @param {string} proposal - The address of the proposal.
+   * @param {IHasVotedOptions} options - The token ID and the address of the proposal.
    * @returns {Promise<IVoteResult>} A promise that resolves to the vote result for the proposal.
    * @public
    */
-  public async hasVoted(proposal: string): Promise<IVoteResult> {
+  public async hasVoted({ proposal, tokenID }: IHasVotedOptions): Promise<IVoteResult> {
     const _functionName = 'hasVoted';
 
     try {
-      const [choice, voted] = await this._contract.hasVoted(proposal);
+      const [choice, voted] = await this._contract.hasVoted(this._address, tokenID, proposal);
 
       return {
         choice: Number(choice),
@@ -499,13 +499,13 @@ export default class Sigillum {
    * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
    * @public
    */
-  public async vote({ choice, proposal }: IVoteOptions): Promise<IStateChangeResult<null>> {
+  public async vote({ choice, proposal, tokenID }: IVoteOptions): Promise<IStateChangeResult<null>> {
     const _functionName = 'vote';
     let response: ContractTransactionResponse;
     let receipt: ContractTransactionReceipt | null;
 
     try {
-      response = await this._contract.vote(proposal, BigInt(choice));
+      response = await this._contract.vote(tokenID, proposal, BigInt(choice));
       receipt = await response.wait();
 
       if (!receipt) {

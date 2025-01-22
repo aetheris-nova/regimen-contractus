@@ -1,6 +1,6 @@
 services:
   anvil:
-    container_name: aetherisnova_anvil
+    container_name: regimencontractus_anvil
     entrypoint: anvil --block-time 1 --block-base-fee-per-gas 0 --gas-limit 3000000000 --hardfork cancun --host 0.0.0.0
     healthcheck:
       test: [ "CMD-SHELL", "anvil --help || exit 1" ]
