@@ -233,7 +233,7 @@ export default class Sigillum {
     const _functionName = 'hasVoted';
 
     try {
-      const [choice, voted] = await this._contract.hasVoted(this._address, tokenID, proposal);
+      const [choice, voted] = await this._contract.hasVoted(tokenID, proposal);
 
       return {
         choice: Number(choice),

@@ -4,10 +4,12 @@ extra_output_files = [
   "evm.bytecode"
 ]
 libs = ["dependencies"]
+optimizer = true
 out = "dist/contracts"
 solc = "0.8.24"
 src = "src/contracts"
 test = "test/contracts"
+viaIR = true
 
 [dependencies]
 forge-std = "1.9.5"

@@ -25,6 +25,7 @@ contract Arbiter is AccessControl {
   event ProposalCreated(address contractAddress, address proposer, uint48 start, uint32 duration);
   event TokenAdded(address indexed token);
   event TokenRemoved(address indexed token);
+  event Debug(string);
 
   constructor() {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -49,17 +50,16 @@ contract Arbiter is AccessControl {
    * @notice Gets the vote for a given token and proposal.
    * @dev
    * * This can only be called from an allowed sigillum (token).
-   * @param token The address of the token.
    * @param tokenID The id of the voter's token.
    * @param proposal The proposal to check.
    * @return Whether the token has voted and what choice they made.
    */
-  function hasVoted(address token, uint256 tokenID, address proposal) external view returns (uint8, bool) {
+  function hasVoted(uint256 tokenID, address proposal) external view returns (uint8, bool) {
     require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
 
     IProposal proposalContract = IProposal(proposal);
 
-    return proposalContract.hasVoted(token, tokenID);
+    return proposalContract.hasVoted(msg.sender, tokenID);
   }
 
   /**

@@ -6,7 +6,6 @@ interface ISigillumContract extends BaseContract {
   readonly contractURI: () => Promise<string>;
   readonly description: () => Promise<string>;
   readonly hasVoted: (
-    token: string,
     tokenID: bigint,
     proposal: string
   ) => Promise<

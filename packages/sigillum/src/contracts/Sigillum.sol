@@ -72,15 +72,16 @@ contract Sigillum is ERC721, AccessControl {
    * @notice Gets the vote for a given `proposal`.
    * @dev
    * * Sender **MUST** be a token holder.
+   * @param tokenID The token ID.
    * @param proposal The proposal to check.
    * @return Whether the sender has voted and what choice they made.
    */
-  function hasVoted(address proposal) external view returns (uint8, bool) {
-    require(balanceOf(msg.sender) != 0, 'TOKEN_DOES_NOT_EXIST');
+  function hasVoted(uint256 tokenID, address proposal) external view returns (uint8, bool) {
+    require(_ownerOf[tokenID] == msg.sender, 'NOT_OWNER_OF_TOKEN');
 
     IArbiter arbiterContract = IArbiter(arbiter);
 
-    return arbiterContract.hasVoted(proposal, msg.sender);
+    return arbiterContract.hasVoted(tokenID, proposal);
   }
 
   function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, ERC721) returns (bool) {
@@ -211,7 +212,7 @@ contract Sigillum is ERC721, AccessControl {
    * @notice Votes for a proposal.
    * @dev
    * * Sender **MUST** be the token holder.
-   * @param id The token ID.
+   * @param tokenID The token ID.
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
