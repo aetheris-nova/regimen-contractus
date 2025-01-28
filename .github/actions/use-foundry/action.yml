@@ -1,0 +1,19 @@
+name: "Setup Foundry"
+
+description: "Install Foundry tools including Soldeer dependencies."
+
+inputs:
+  package_dir:
+    description: "The directory name of the package."
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: "🔧 Setup Foundry"
+      uses: foundry-rs/foundry-toolchain@v1
+    - name: "📦 Install Dependencies"
+      run: forge soldeer install
+      shell: bash
+      working-directory: ./packages/${{ inputs.package_dir }}
