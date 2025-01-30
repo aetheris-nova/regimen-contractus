@@ -11,6 +11,7 @@ jobs:
       pull-requests: read
     outputs:
       arbiter: ${{ steps.filter.outputs.arbiter }}
+      codex_aetherium: ${{ steps.filter.outputs.codex_aetherium }}
       sigillum: ${{ steps.filter.outputs.sigillum }}
       types: ${{ steps.filter.outputs.types }}
     steps:
@@ -21,6 +22,8 @@ jobs:
           filters: |
             arbiter:
               - 'packages/arbiter/**'
+            codex_aetherium:
+              - 'packages/codex-aetherium/**'
             sigillum:
               - 'packages/sigillum/**'
             types:
@@ -62,6 +65,15 @@ jobs:
       package_dir: "arbiter"
       package_name: "@aetherisnova/arbiter"
       with_foundry: true
+
+  lint_build_test_codex_aetherium:
+    name: "Lint, Build & Test - @aetherisnova/codex-aetherium"
+    needs: [changed_files, validate_pr_title]
+    if: ${{ needs.changed_files.outputs.codex_aetherium == 'true' }}
+    uses: ./.github/workflows/lint_build_test.yml
+    with:
+      package_dir: "codex-aetherium"
+      package_name: "@aetherisnova/codex-aetherium"
 
   lint_build_test_sigillum:
     name: "Lint, Build & Test - @aetherisnova/sigillum"

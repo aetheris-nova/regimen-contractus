@@ -94,7 +94,6 @@ pnpm install
 | [`codex-aetherium`](./packages/codex-aetherium/README.md) | `public`   | The frontend application that enables Aetherii to create, vote and execute proposals.               | -                                                                                                                                 |
 | [`sigillum`](./packages/sigillum/README.md)               | `public`   | The basic smart contract for the Ordos membership NFTs.                                             | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Fsigillum)](https://www.npmjs.com/package/%40aetherisnova/sigillum) |
 | [`types`](./packages/types/README.md)                     | `private`  | TypeScript types for the contract clients.                                                          | -                                                                                                                                 |
-| [`utils`](./packages/utils/README.md)                     | `private`  | TypeScript utilities for the contract clients.                                                      | -                                                                                                                                 |
 
 <sup>[Back to top ^][table-of-contents]</sup>
 

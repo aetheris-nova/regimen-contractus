@@ -28,7 +28,7 @@ jobs:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release_arbiter:
-    needs: [release_types, release_utils]
+    needs: [release_types]
     name: "Release - @aetherisnova/arbiter"
     uses: ./.github/workflows/publish_release.yml
     with:
@@ -39,12 +39,23 @@ jobs:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release_sigillum:
-    needs: [release_types, release_utils, release_arbiter]
+    needs: [release_types, release_arbiter]
     name: "Release - @aetherisnova/sigillum"
     uses: ./.github/workflows/publish_release.yml
     with:
       package_dir: "sigillum"
       package_name: "@aetherisnova/sigillum"
       with_foundry: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # **MUST** be after arbiter and sigillum packages
+  release_codex_aetherium:
+    needs: [release_types, release_arbiter, release_sigillum]
+    name: "Release - @aetherisnova/codex-aetherium"
+    uses: ./.github/workflows/publish_release.yml
+    with:
+      package_dir: "codex-aetherium"
+      package_name: "@aetherisnova/codex-aetherium"
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
