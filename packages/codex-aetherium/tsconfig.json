@@ -24,6 +24,7 @@
       "@client/errors/*": ["src/errors/*"],
       "@client/hooks/*": ["src/hooks/*"],
       "@client/icons/*": ["src/icons/*"],
+      "@client/loaders": ["src/loaders"],
       "@client/modals/*": ["src/modals/*"],
       "@client/pages/*": ["src/pages/*"],
       "@client/selectors": ["src/selectors"],

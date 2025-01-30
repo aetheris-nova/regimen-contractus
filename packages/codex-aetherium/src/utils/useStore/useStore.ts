@@ -6,6 +6,7 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { STORE_NAME } from '@client/constants';
 
 // slices
+import createAccountSlice from '@client/slices/createAccountSlice';
 import createLayoutSlice from '@client/slices/createLayoutSlice';
 import createSystemSlice from '@client/slices/createSystemSlice';
 import createWorldSlice from '@client/slices/createWorldSlice';
@@ -17,13 +18,15 @@ const useStore = create<TState>()(
   devtools(
     persist(
       (...api) => ({
+        ...createAccountSlice(...api),
         ...createLayoutSlice(...api),
         ...createSystemSlice(...api),
         ...createWorldSlice(...api),
       }),
       {
         name: STORE_NAME,
-        partialize: ({ colorMode, worldConfig }) => ({
+        partialize: ({ accounts, colorMode, worldConfig }) => ({
+          accounts,
           colorMode,
           worldConfig,
         }),

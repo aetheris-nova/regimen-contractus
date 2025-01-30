@@ -10,7 +10,7 @@ const createWorldSlice: TStateCreator<ISlice> = (setState, getState) => {
 
   return {
     // state
-    isFetchingWorldConfig: false,
+    fetchingWorldConfig: false,
     worldConfig: null,
     // actions
     fetchWorldConfigAction: fetchWorldConfigAction(api),

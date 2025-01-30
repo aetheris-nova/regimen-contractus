@@ -1,9 +1,9 @@
 import { DEFAULT_GAP } from '@aetherisnova/ui-components';
-import { Heading, Spacer, Text, VStack } from '@chakra-ui/react';
+import { Heading, Spacer, VStack } from '@chakra-ui/react';
 import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const WelcomePage: FC = () => {
+const DashboardPage: FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -12,12 +12,8 @@ const WelcomePage: FC = () => {
 
       <VStack p={DEFAULT_GAP} w="full">
         <Heading fontSize="2xl">
-          {t('headings.welcome')}
+          {`Dashboard`}
         </Heading>
-
-        <Text fontSize="sm" textAlign="center">
-          {t('captions.description')}
-        </Text>
       </VStack>
 
       <Spacer />
@@ -25,4 +21,4 @@ const WelcomePage: FC = () => {
   );
 };
 
-export default WelcomePage;
+export default DashboardPage;

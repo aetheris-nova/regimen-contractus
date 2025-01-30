@@ -31,7 +31,7 @@ const fetchWorldConfigAction: TActionCreator<undefined, Promise<IWorldConfigWith
 
     setState((state) => ({
       ...state,
-      isFetchingWorldConfig: true,
+      fetchingWorldConfig: true,
     }));
 
     try {
@@ -54,7 +54,7 @@ const fetchWorldConfigAction: TActionCreator<undefined, Promise<IWorldConfigWith
 
       setState((state) => ({
         ...state,
-        isFetchingWorldConfig: false,
+        fetchingWorldConfig: false,
         worldConfig: _worldConfig,
       }));
 
@@ -64,7 +64,7 @@ const fetchWorldConfigAction: TActionCreator<undefined, Promise<IWorldConfigWith
 
       setState((state) => ({
         ...state,
-        isFetchingWorldConfig: false,
+        fetchingWorldConfig: false,
       }));
 
       throw error;
