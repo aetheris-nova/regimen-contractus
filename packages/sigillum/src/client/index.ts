@@ -1,5 +1,6 @@
-// exports will be generated automatically using: npm run generate:index
-export { default as Sigillum } from './models/Sigillum';
+// exports will be generated automatically generated using: npm run generate:index
+export * from './abis';
 export * from './constants';
 export * from './enums';
+export * from './models';
 export * from './types';

@@ -13,7 +13,6 @@ jobs:
       arbiter: ${{ steps.filter.outputs.arbiter }}
       sigillum: ${{ steps.filter.outputs.sigillum }}
       types: ${{ steps.filter.outputs.types }}
-      utils: ${{ steps.filter.outputs.utils }}
     steps:
       - name: "📥 Filter"
         uses: dorny/paths-filter@v3
@@ -26,8 +25,6 @@ jobs:
               - 'packages/sigillum/**'
             types:
               - 'packages/types/**'
-            utils:
-              - 'packages/utils/**'
 
   validate_pr_title:
     name: "Validate PR Title"
@@ -84,12 +81,3 @@ jobs:
     with:
       package_dir: "types"
       package_name: "@aetherisnova/regimen-contractus-types"
-
-  lint_build_test_utils:
-    name: "Lint, Build & Test - @aetherisnova/regimen-contractus-utils"
-    needs: [changed_files, validate_pr_title]
-    if: ${{ needs.changed_files.outputs.utils == 'true' }}
-    uses: ./.github/workflows/lint_build_test.yml
-    with:
-      package_dir: "utils"
-      package_name: "@aetherisnova/regimen-contractus-utils"

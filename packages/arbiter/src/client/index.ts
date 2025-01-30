@@ -1,5 +1,6 @@
-// exports will be generated automatically using: npm run generate:index
-export { default as Arbiter } from './models/Arbiter';
-export { default as Proposal } from './models/Proposal';
+// exports will be generated automatically generated using: npm run generate:index
+export * from './abis';
 export * from './constants';
+export * from './enums';
+export * from './models';
 export * from './types';

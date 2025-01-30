@@ -1,5 +1,7 @@
+import type { Address } from 'viem';
+
 interface IHasVotedOptions {
-  proposal: string;
+  proposal: Address;
   tokenID: bigint;
 }
 

@@ -112,16 +112,20 @@ contract Arbiter is AccessControl {
    * @notice Allows a token to submit a proposal. If the token is not part of the allowed tokens, i.e. not a member of
    * the ordos, they will not be able to submit a proposal.
    * @dev
-   * * This can only be called from an allowed sigillum (token).
+   * * **MUST** have the `CUSTODIAN_ROLE`.
    * * This will deploy a new proposal contract with the arbiter (this contract) as owner.
-   * @param proposer The address of the proposer; the token holder.
+   * @param proposer The address of the proposer.
    * @param title The title of the proposal. Must be less that 256 characters.
    * @param start The timestamp (in seconds) of when the voting will start. Must be now, or a future date.
    * @param duration The length of time the voting for the proposal will last.
    * @return The created proposal contract address.
    */
-  function propose(address proposer, string memory title, uint48 start, uint32 duration) external returns (address) {
-    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+  function propose(
+    address proposer,
+    string memory title,
+    uint48 start,
+    uint32 duration
+  ) external onlyRole(CUSTODIAN_ROLE) returns (address) {
     require(bytes(title).length <= 256, 'TITLE_TOO_LONG');
     require(start >= block.timestamp, 'START_TIME_IN_PAST');
 

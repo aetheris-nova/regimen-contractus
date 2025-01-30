@@ -1,8 +1,9 @@
-import type { JsonRpcProvider } from 'ethers';
+import type { ILogger } from '@aetherisnova/types';
+import type { Config as WagmiConfig } from '@wagmi/core';
 
 interface IInitializeClientOptions {
-  provider: JsonRpcProvider;
-  signerAddress?: string;
+  logger?: ILogger;
+  wagmiConfig: WagmiConfig;
 }
 
 export default IInitializeClientOptions;

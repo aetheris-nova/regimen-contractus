@@ -1,14 +1,14 @@
-import type { BaseContract, JsonRpcProvider } from 'ethers';
+import type { ILogger } from '@aetherisnova/types';
+import type { Config as WagmiConfig } from '@wagmi/core';
+import type { Address } from 'viem';
 
 // types
 import type IBaseClientOptions from './IBaseClientOptions';
-import type ILogger from './ILogger';
 
-interface INewClientOptions<Contract extends BaseContract> extends IBaseClientOptions {
-  address: string;
-  contract: Contract;
+interface INewClientOptions extends IBaseClientOptions {
+  address: Address;
   logger: ILogger;
-  provider: JsonRpcProvider;
+  wagmiConfig: WagmiConfig;
 }
 
 export default INewClientOptions;

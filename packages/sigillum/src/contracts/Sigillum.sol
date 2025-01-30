@@ -173,29 +173,6 @@ contract Sigillum is ERC721, AccessControl {
   }
 
   /**
-   * @notice Calls the arbiter contract and submits the proposal.
-   * @dev
-   * * Sender **MUST** be a token holder.
-   * * Emits a `ProposalCreated(address,address,uint48,uint32)` event.
-   * @param title The title of the proposal. Must be less that 256 characters.
-   * @param start The timestamp (in seconds) of when the voting will start. Must be now, or a future date.
-   * @param duration The length of time the voting for the proposal will last.
-   * @return The created proposal contract address.
-   */
-  function propose(string memory title, uint48 start, uint32 duration) external returns (address) {
-    require(balanceOf(msg.sender) != 0, 'TOKEN_DOES_NOT_EXIST');
-    require(bytes(title).length <= 256, 'TITLE_TOO_LONG');
-    require(start >= block.timestamp, 'START_TIME_IN_PAST');
-
-    IArbiter arbiterContract = IArbiter(arbiter);
-    address proposal = arbiterContract.propose(msg.sender, title, start, duration);
-
-    emit ProposalCreated(proposal, msg.sender, start, duration);
-
-    return proposal;
-  }
-
-  /**
    * @notice Updates the arbiter contract that allows for submission of proposals and voting of proposals.
    * @dev
    * * **MUST** have the `ISSUER_ROLE`.

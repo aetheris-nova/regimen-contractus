@@ -1,31 +1,46 @@
 import { Sigillum } from '@aetherisnova/sigillum';
-import { JsonRpcProvider, Wallet } from 'ethers';
+import { mock } from '@wagmi/connectors';
+import { type Config as WagmiConfig, createConfig, connect } from '@wagmi/core';
+import { type Address, createWalletClient, type PrivateKeyAccount, webSocket } from 'viem';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { anvil } from 'viem/chains';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 // models
 import Arbiter from './Arbiter';
+import Proposal from './Proposal';
 
 describe(Arbiter.name, () => {
   let contract: Arbiter;
-  let deployerSigner: Wallet;
-  let provider: JsonRpcProvider;
+  let deployerAccount: PrivateKeyAccount;
+  let wagmiConfig: WagmiConfig;
   let tokenContract: Sigillum;
 
   beforeAll(async () => {
-    if (!process.env.RPC_URL) {
-      throw new Error('no rpc url set in the .env.test file');
-    }
-
     if (!process.env.ACCOUNT_0_PRIVATE_KEY) {
       throw new Error('no account 0 private key set in the .env.test file');
     }
 
-    provider = new JsonRpcProvider(process.env.RPC_URL);
-    deployerSigner = new Wallet(process.env.ACCOUNT_0_PRIVATE_KEY, provider);
+    deployerAccount = privateKeyToAccount(process.env.ACCOUNT_0_PRIVATE_KEY as Address);
+    wagmiConfig = createConfig({
+      chains: [anvil],
+      client: ({ chain }) =>
+        createWalletClient({
+          chain,
+          account: deployerAccount,
+          transport: webSocket(),
+        }),
+    });
+
+    await connect(wagmiConfig, {
+      connector: mock({
+        accounts: [deployerAccount.address],
+      }),
+    });
+
     contract = await Arbiter.deploy({
-      provider,
       silent: true,
-      signerAddress: deployerSigner.address,
+      wagmiConfig,
     });
   }, 60000);
 
@@ -34,16 +49,15 @@ describe(Arbiter.name, () => {
       arbiter: contract.address(),
       description: 'The Sigillum that proves membership to the Ordo Administratorum.',
       name: 'Sigillum Ordo Administratorum',
-      provider,
       silent: true,
-      signerAddress: deployerSigner.address,
       symbol: 'SOA',
+      wagmiConfig,
     });
   });
 
   describe('addExecutor()', () => {
     it('should add executor privileges', async () => {
-      const account = Wallet.createRandom(provider);
+      const account = privateKeyToAccount(generatePrivateKey());
       let isExecutor = await contract.isExecutor(account.address);
 
       expect(isExecutor).toBe(false);
@@ -70,10 +84,37 @@ describe(Arbiter.name, () => {
     });
   });
 
+  describe('propose()', () => {
+    it('should create a proposal', async () => {
+      const duration = BigInt(86400); // 1 day
+      const now = new Date();
+      const proposerAccount = privateKeyToAccount(generatePrivateKey());
+      const start = BigInt((new Date().setDate(now.getDate() + 1) / 1000).toFixed(0)); // 24 hours later
+      const title = 'Decree: Founding Of The Ordo Administratorum';
+      const { result } = await contract.propose({
+        duration,
+        proposer: proposerAccount.address,
+        start,
+        title,
+      });
+      const proposalContract = await Proposal.attach({
+        address: result,
+        silent: true,
+        wagmiConfig,
+      });
+      const details = await proposalContract.details();
+
+      expect(details.duration).toEqual(duration);
+      expect(details.proposer).toBe(proposerAccount.address);
+      expect(details.start).toEqual(start);
+      expect(details.title).toBe(title);
+    });
+  });
+
   describe('removeExecutor()', () => {
     it('should remove executor privileges', async () => {
       // arrange
-      const account = Wallet.createRandom(provider);
+      const account = privateKeyToAccount(generatePrivateKey());
       let isExecutor: boolean;
 
       await contract.addExecutor(account.address);

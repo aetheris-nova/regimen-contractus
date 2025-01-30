@@ -15,6 +15,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "paths": {
+      "@client/abis": ["src/client/abis"],
       "@client/constants": ["src/client/constants"],
       "@client/enums": ["src/client/enums"],
       "@client/models/*": ["src/client/models/*"],

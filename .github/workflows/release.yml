@@ -27,16 +27,6 @@ jobs:
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  release_utils:
-    needs: [release_types]
-    name: "Release - @aetherisnova/regimen-contractus-utils"
-    uses: ./.github/workflows/publish_release.yml
-    with:
-      package_dir: "utils"
-      package_name: "@aetherisnova/regimen-contractus-utils"
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
   release_arbiter:
     needs: [release_types, release_utils]
     name: "Release - @aetherisnova/arbiter"

@@ -1,7 +1,4 @@
-import { Proposal } from '@aetherisnova/arbiter';
-
-// models
-import Sigillum from '@client/models/Sigillum';
+import { Arbiter, Proposal } from '@aetherisnova/arbiter';
 
 // types
 import type { IOptions } from './types';
@@ -14,28 +11,27 @@ import type { IOptions } from './types';
 export default async function createProposal({
   contractAddress,
   duration,
-  provider,
-  signerAddress,
+  proposer,
   start,
   title,
+  wagmiConfig,
 }: IOptions): Promise<Proposal> {
   const silent = true;
-  const tokenContract = await Sigillum.attach({
+  const arbiterContract = await Arbiter.attach({
     address: contractAddress,
-    provider,
-    signerAddress,
     silent,
+    wagmiConfig,
   });
-  const { result } = await tokenContract.propose({
+  const { result } = await arbiterContract.propose({
     duration,
+    proposer,
     start,
     title,
   });
 
   return await Proposal.attach({
     address: result,
-    provider,
-    signerAddress,
     silent,
+    wagmiConfig,
   });
 }
