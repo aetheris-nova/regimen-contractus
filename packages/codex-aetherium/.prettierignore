@@ -1,5 +1,3 @@
 .env
-cache/
-dependencies/
 dist/
 node_modules/
