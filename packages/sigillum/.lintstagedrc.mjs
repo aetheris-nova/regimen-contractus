@@ -1,6 +1,12 @@
-export default {
-  '**/*.{js,json,sol,ts}': (filenames) => [
-    `sh -c 'pnpm -F @aetherisnova/sigillum run generate:index && git add ./src/client/index.ts'`,
-    `prettier --write ${filenames.join(' ')}`,
-  ],
-};
+import { resolve } from 'node:path';
+
+export default (() => {
+  const packageName = 'sigillum';
+
+  return {
+    '**/*.{js,json,sol,ts}': (filenames) => [
+      `sh -c 'pnpm -F @aetherisnova/${packageName} run generate:index && git add ${resolve(process.cwd(), 'packages', packageName, 'src', 'client', 'index.ts')}'`,
+      `prettier --write ${filenames.join(' ')}`,
+    ],
+  };
+})();

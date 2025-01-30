@@ -1,4 +1,5 @@
+.env
 cache/
-lib/
-out/
+dependencies/
+dist/
 node_modules/

@@ -11,9 +11,9 @@ jobs:
       pull-requests: read
     outputs:
       arbiter: ${{ steps.filter.outputs.arbiter }}
+      codex_aetherium: ${{ steps.filter.outputs.codex_aetherium }}
       sigillum: ${{ steps.filter.outputs.sigillum }}
       types: ${{ steps.filter.outputs.types }}
-      utils: ${{ steps.filter.outputs.utils }}
     steps:
       - name: "📥 Filter"
         uses: dorny/paths-filter@v3
@@ -22,12 +22,12 @@ jobs:
           filters: |
             arbiter:
               - 'packages/arbiter/**'
+            codex_aetherium:
+              - 'packages/codex-aetherium/**'
             sigillum:
               - 'packages/sigillum/**'
             types:
               - 'packages/types/**'
-            utils:
-              - 'packages/utils/**'
 
   validate_pr_title:
     name: "Validate PR Title"
@@ -62,8 +62,18 @@ jobs:
     if: ${{ needs.changed_files.outputs.arbiter == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
+      package_dir: "arbiter"
       package_name: "@aetherisnova/arbiter"
       with_foundry: true
+
+  lint_build_test_codex_aetherium:
+    name: "Lint, Build & Test - @aetherisnova/codex-aetherium"
+    needs: [changed_files, validate_pr_title]
+    if: ${{ needs.changed_files.outputs.codex_aetherium == 'true' }}
+    uses: ./.github/workflows/lint_build_test.yml
+    with:
+      package_dir: "codex-aetherium"
+      package_name: "@aetherisnova/codex-aetherium"
 
   lint_build_test_sigillum:
     name: "Lint, Build & Test - @aetherisnova/sigillum"
@@ -71,6 +81,7 @@ jobs:
     if: ${{ needs.changed_files.outputs.sigillum == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
+      package_dir: "sigillum"
       package_name: "@aetherisnova/sigillum"
       with_foundry: true
 
@@ -80,12 +91,5 @@ jobs:
     if: ${{ needs.changed_files.outputs.types == 'true' }}
     uses: ./.github/workflows/lint_build_test.yml
     with:
+      package_dir: "types"
       package_name: "@aetherisnova/regimen-contractus-types"
-
-  lint_build_test_utils:
-    name: "Lint, Build & Test - @aetherisnova/regimen-contractus-utils"
-    needs: [changed_files, validate_pr_title]
-    if: ${{ needs.changed_files.outputs.utils == 'true' }}
-    uses: ./.github/workflows/lint_build_test.yml
-    with:
-      package_name: "@aetherisnova/regimen-contractus-utils"

@@ -1,8 +1,8 @@
-import type { ContractTransactionReceipt } from 'ethers';
+import type { WaitForTransactionReceiptReturnType } from '@wagmi/core';
 
 interface IStateChangeResult<Result> {
   result: Result;
-  transaction: ContractTransactionReceipt;
+  transaction: WaitForTransactionReceiptReturnType;
 }
 
 export default IStateChangeResult;

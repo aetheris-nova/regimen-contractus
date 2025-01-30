@@ -33,7 +33,7 @@ function main {
     --build \
     -d
 
-  container_name=aetherisnova_anvil
+  container_name=regimencontractus_anvil
   service_name=anvil
 
   while [ ${attempt} -le 29 ]; do

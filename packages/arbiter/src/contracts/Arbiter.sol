@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.24;
 
-import { AccessControl } from 'openzeppelin-contracts/contracts/access/AccessControl.sol';
+import { AccessControl } from '@openzeppelin-contracts/access/AccessControl.sol';
 
 // contracts
 import { IProposal } from './IProposal.sol';
@@ -25,6 +25,7 @@ contract Arbiter is AccessControl {
   event ProposalCreated(address contractAddress, address proposer, uint48 start, uint32 duration);
   event TokenAdded(address indexed token);
   event TokenRemoved(address indexed token);
+  event Debug(string);
 
   constructor() {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -46,19 +47,19 @@ contract Arbiter is AccessControl {
   }
 
   /**
-   * @notice Gets the vote for a given `proposal` and `voter`.
+   * @notice Gets the vote for a given token and proposal.
    * @dev
    * * This can only be called from an allowed sigillum (token).
+   * @param tokenID The id of the voter's token.
    * @param proposal The proposal to check.
-   * @param voter The address of the voter.
-   * @return Whether the `voter` has voted and what choice they made.
+   * @return Whether the token has voted and what choice they made.
    */
-  function hasVoted(address proposal, address voter) external view returns (uint8, bool) {
+  function hasVoted(uint256 tokenID, address proposal) external view returns (uint8, bool) {
     require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
 
     IProposal proposalContract = IProposal(proposal);
 
-    return proposalContract.hasVoted(voter);
+    return proposalContract.hasVoted(msg.sender, tokenID);
   }
 
   /**
@@ -111,16 +112,20 @@ contract Arbiter is AccessControl {
    * @notice Allows a token to submit a proposal. If the token is not part of the allowed tokens, i.e. not a member of
    * the ordos, they will not be able to submit a proposal.
    * @dev
-   * * This can only be called from an allowed sigillum (token).
+   * * **MUST** have the `CUSTODIAN_ROLE`.
    * * This will deploy a new proposal contract with the arbiter (this contract) as owner.
-   * @param proposer The address of the proposer; the token holder.
+   * @param proposer The address of the proposer.
    * @param title The title of the proposal. Must be less that 256 characters.
    * @param start The timestamp (in seconds) of when the voting will start. Must be now, or a future date.
    * @param duration The length of time the voting for the proposal will last.
    * @return The created proposal contract address.
    */
-  function propose(address proposer, string memory title, uint48 start, uint32 duration) external returns (address) {
-    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+  function propose(
+    address proposer,
+    string memory title,
+    uint48 start,
+    uint32 duration
+  ) external onlyRole(CUSTODIAN_ROLE) returns (address) {
     require(bytes(title).length <= 256, 'TITLE_TOO_LONG');
     require(start >= block.timestamp, 'START_TIME_IN_PAST');
 
@@ -148,15 +153,15 @@ contract Arbiter is AccessControl {
    * @notice Votes for a proposal.
    * @dev
    * * This can only be called from an allowed sigillum (token).
-   * @param voter The address of the voter.
+   * @param tokenID The id of the voter's token.
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
-  function vote(address voter, address proposal, uint8 choice) external {
+  function vote(uint256 tokenID, address proposal, uint8 choice) external {
     require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
 
     IProposal proposalContract = IProposal(proposal);
 
-    proposalContract.vote(voter, choice);
+    proposalContract.vote(msg.sender, tokenID, choice);
   }
 }

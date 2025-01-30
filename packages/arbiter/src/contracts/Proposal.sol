@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.24;
 
-import { Ownable } from 'openzeppelin-contracts/contracts/access/Ownable.sol';
+import { Ownable } from '@openzeppelin-contracts/access/Ownable.sol';
 
 /**
  * @title Proposal
@@ -23,14 +23,14 @@ contract Proposal is Ownable {
   }
 
   // variables
-  mapping(address => Vote) internal _votes;
+  mapping(bytes32 => Vote) internal _votes;
   uint32 public abstainVotes;
   uint32 public acceptVotes;
   ProposalDetails public details;
   uint32 public rejectVotes;
 
   // events
-  event Voted(address indexed voter);
+  event Voted(address token, uint256 tokenID);
   event ProposalCanceled();
   event ProposalExecuted();
 
@@ -42,17 +42,33 @@ contract Proposal is Ownable {
   }
 
   /**
+   * internal functions - read
+   */
+
+  /**
+   * @notice Creates an ID for a voter.
+   * @dev
+   * * The ID is a deterministic hash of the token address and the token's ID.
+   * @return The index for a given voter.
+   */
+  function _createVoterID(address token, uint256 tokenID) internal pure returns (bytes32) {
+    return keccak256(abi.encodePacked(token, tokenID));
+  }
+
+  /**
    * external functions - read
    */
 
   /**
-   * @notice Gets the vote status for a given `voter`.
+   * @notice Gets the vote status for a given token.
    * @dev
    * * This *MUST* be called from the `Arbiter` contract.
+   * @param token The address of the token.
+   * @param tokenID The id of the voter's token.
    * @return The vote for the `voter`.
    */
-  function hasVoted(address voter) external view onlyOwner returns (Vote memory) {
-    return _votes[voter];
+  function hasVoted(address token, uint256 tokenID) external view onlyOwner returns (Vote memory) {
+    return _votes[_createVoterID(token, tokenID)];
   }
 
   /**
@@ -108,12 +124,15 @@ contract Proposal is Ownable {
    * * This will revert if the voter has already voted.
    * * This will revert if the proposal has been canceled.
    * * This will revert if the proposal has been executed.
-   * * If successful, a `Voted(address)` event will be emitted.
-   * @param voter The address of the voter.
+   * * If successful, a `Voted(address,uint256)` event will be emitted.
+   * @param token The address of the token.
+   * @param tokenID The id of the voter's token.
    * @param choice The choice of the voter. Should be one of: abstain = 0, accept = 1, reject = 2.
    */
-  function vote(address voter, uint8 choice) external onlyOwner {
-    require(!_votes[voter].voted, 'ALREADY_VOTED');
+  function vote(address token, uint256 tokenID, uint8 choice) external onlyOwner {
+    bytes32 voterID = _createVoterID(token, tokenID);
+
+    require(!_votes[voterID].voted, 'ALREADY_VOTED');
     require(choice <= 2, 'CHOICE_OUT_OF_BOUNDS');
     require(!details.canceled, 'PROPOSAL_ALREADY_CANCELED');
     require(!details.executed, 'PROPOSAL_ALREADY_EXECUTED');
@@ -130,9 +149,9 @@ contract Proposal is Ownable {
       rejectVotes = rejectVotes + 1;
     }
 
-    _votes[voter] = Vote(choice, true);
+    _votes[voterID] = Vote(choice, true);
 
-    emit Voted(voter);
+    emit Voted(token, tokenID);
   }
 
   /**

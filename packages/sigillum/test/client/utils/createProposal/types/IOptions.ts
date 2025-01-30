@@ -1,12 +1,13 @@
-import type { JsonRpcProvider } from 'ethers';
+import type { Config as WagmiConfig } from '@wagmi/core';
+import type { Address } from 'viem';
 
 interface IOptions {
-  contractAddress: string;
+  contractAddress: Address;
   duration: bigint;
-  provider: JsonRpcProvider;
-  signerAddress?: string;
+  proposer: Address;
   start: bigint;
   title: string;
+  wagmiConfig: WagmiConfig;
 }
 
 export default IOptions;
