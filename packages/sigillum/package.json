@@ -1,6 +1,6 @@
 {
   "name": "@aetherisnova/sigillum",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0",
   "private": false,
   "description": "The Sigillum schema underpins the basic features of the sigillum for each Ordo.",
   "repository": {
