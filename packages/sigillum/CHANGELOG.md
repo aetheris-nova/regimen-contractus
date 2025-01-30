@@ -1,3 +1,10 @@
+# [@aetherisnova/sigillum-v1.0.0-beta.2](https://github.com/aetheris-nova/regimen-contractus/compare/@aetherisnova/sigillum-v1.0.0-beta.1...@aetherisnova/sigillum-v1.0.0-beta.2) (2025-01-30)
+
+
+### Features
+
+* **codex-aetherium:** add ui client ([#4](https://github.com/aetheris-nova/regimen-contractus/issues/4)) ([1b30d19](https://github.com/aetheris-nova/regimen-contractus/commit/1b30d1940baad1fb9d0d908cafad96c723af32f5))
+
 # @aetherisnova/sigillum-v1.0.0-beta.1 (2024-12-20)
 
 
