@@ -238,6 +238,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.16.0(jiti@1.21.6))
+      globals:
+        specifier: ^15.13.0
+        version: 15.13.0
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
