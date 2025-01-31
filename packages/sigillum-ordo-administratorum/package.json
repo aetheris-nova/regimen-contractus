@@ -1,8 +1,8 @@
 {
-  "name": "@aetherisnova/arbiter",
+  "name": "@aetherisnova/sigillum-ordo-administratorum",
   "version": "1.0.0",
   "private": false,
-  "description": "The Arbiter schema facilitates the submission of proposals and allows for members of the Ordos to pledge their support.",
+  "description": "The Sigillum Ordo Administratorum schema is the sigillum of the great Ordo Administratorum.",
   "repository": {
     "type": "git",
     "url": "https://github.com/aetheris-nova/regimen-contractus"
@@ -30,15 +30,19 @@
     "postinstall": "./scripts/postinstall.sh",
     "prettier": "prettier --write \"**/*.{js,json,sol,ts}\"",
     "test": "pnpm test:contracts && pnpm test:client",
-    "test:client": "pnpm -F @aetherisnova/sigillum build && pnpm build:contracts && vitest run --config vitest.config.ts",
-    "test:contracts": "forge test"
+    "test:client": "pnpm build:contracts && vitest run --config vitest.config.ts",
+    "test:contracts": "exit 0"
   },
   "dependencies": {
+    "@aetherisnova/sigillum": "workspace:^",
     "@aetherisnova/regimen-contractus-types": "workspace:^",
     "@aetherisnova/types": "^1.2.0",
-    "@aetherisnova/utils": "^1.2.0"
+    "@aetherisnova/utils": "^1.2.0",
+    "@stablelib/base64": "^2.0.0",
+    "@stablelib/utf8": "^2.0.0"
   },
   "devDependencies": {
+    "@aetherisnova/arbiter": "workspace:^",
     "@types/node": "^22.10.1",
     "@wagmi/cli": "^2.2.0",
     "@wagmi/connectors": "^5.7.5",

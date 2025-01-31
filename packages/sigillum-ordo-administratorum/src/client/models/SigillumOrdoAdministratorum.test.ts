@@ -1,6 +1,13 @@
 import { Arbiter, Proposal } from '@aetherisnova/arbiter';
+import {
+  ITokenMetadata,
+  NOT_OWNER_OF_TOKEN,
+  RECIPIENT_ALREADY_HAS_TOKEN,
+  TOKEN_DOES_NOT_EXIST,
+  VoteChoiceEnum,
+} from '@aetherisnova/sigillum';
 import { mock } from '@wagmi/connectors';
-import { type Config as WagmiConfig, createConfig, connect } from '@wagmi/core';
+import { type Config as WagmiConfig, connect, createConfig } from '@wagmi/core';
 import {
   type Address,
   CallExecutionError,
@@ -13,33 +20,28 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { anvil } from 'viem/chains';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 
-// constants
-import { NOT_OWNER_OF_TOKEN, RECIPIENT_ALREADY_HAS_TOKEN, TOKEN_DOES_NOT_EXIST } from '@client/constants';
-
 // enums
-import { VoteChoiceEnum } from '@client/enums';
+import { RankEnum } from '@client/enums';
 
 // models
-import Sigillum from './Sigillum';
-
-// types
-import { ITokenMetadata } from '@client/types';
+import SigillumOrdoAdministratorum from './SigillumOrdoAdministratorum';
 
 // utils
 import createProposal from '@test/utils/createProposal';
 import wait from '@test/utils/wait';
 
-describe(Sigillum.name, () => {
+describe(SigillumOrdoAdministratorum.name, () => {
   const description = 'The Sigillum that proves membership to the Ordo Administratorum.';
   const name = 'Sigillum Ordo Administratorum';
   const symbol = 'SOA';
   let deployerAccount: PrivateKeyAccount;
   let notPermittedAccount: PrivateKeyAccount;
   let tokenHolderAccount: PrivateKeyAccount;
+  let tokenHolderRank: RankEnum;
   let tokenHolderTokenID: bigint;
   let wagmiConfig: WagmiConfig;
   let arbiterContract: Arbiter;
-  let contract: Sigillum;
+  let contract: SigillumOrdoAdministratorum;
 
   beforeAll(async () => {
     if (!process.env.RPC_URL) {
@@ -83,7 +85,7 @@ describe(Sigillum.name, () => {
       wagmiConfig,
     });
     // deploy the sigillum contract
-    contract = await Sigillum.deploy({
+    contract = await SigillumOrdoAdministratorum.deploy({
       arbiter: arbiterContract.address(),
       description,
       name,
@@ -93,14 +95,17 @@ describe(Sigillum.name, () => {
     });
     // add the token contract to the arbiter contract
     await arbiterContract.addToken(contract.address());
+
+    tokenHolderRank = RankEnum.Adeptus;
+
     // mint a token holder
-    const { result } = await contract.mint(tokenHolderAccount.address);
+    const { result } = await contract.mint(tokenHolderAccount.address, tokenHolderRank);
 
     tokenHolderTokenID = result;
   }, 60000);
 
   describe('burn()', () => {
-    it('should throw and error if the issuer does not have permission to burn', async () => {
+    it('should throw and error if the burner does not have permission to burn', async () => {
       const _wagmiConfig = createConfig({
         chains: [anvil],
         client: ({ chain }) =>
@@ -110,7 +115,7 @@ describe(Sigillum.name, () => {
             transport: webSocket(),
           }),
       });
-      let _contract: Sigillum;
+      let _contract: SigillumOrdoAdministratorum;
 
       await connect(_wagmiConfig, {
         connector: mock({
@@ -118,13 +123,13 @@ describe(Sigillum.name, () => {
         }),
       });
 
-      _contract = await Sigillum.attach({
+      _contract = await SigillumOrdoAdministratorum.attach({
         address: contract.address(),
         silent: true,
         wagmiConfig: _wagmiConfig,
       });
 
-      const { result } = await contract.mint(privateKeyToAccount(generatePrivateKey()).address);
+      const { result } = await contract.mint(privateKeyToAccount(generatePrivateKey()).address, RankEnum.Novitiate);
 
       try {
         await _contract.burn(result); // burn the token using un-permitted private key
@@ -155,7 +160,7 @@ describe(Sigillum.name, () => {
       let currentSupply: bigint;
       let supply: bigint;
 
-      const { result } = await contract.mint(recipient.address);
+      const { result } = await contract.mint(recipient.address, RankEnum.Novitiate);
       supply = await contract.supply();
 
       await contract.burn(result);
@@ -175,17 +180,6 @@ describe(Sigillum.name, () => {
   });
 
   describe('mint()', () => {
-    it('should mint a new token', async () => {
-      const recipient = privateKeyToAccount(generatePrivateKey());
-      const supply = await contract.supply();
-      let currentSupply: bigint;
-
-      await contract.mint(recipient.address);
-      currentSupply = await contract.supply();
-
-      expect(currentSupply).toBe(supply + BigInt(1));
-    });
-
     it('should throw and error if the issuer does not have permission to mint', async () => {
       const _wagmiConfig = createConfig({
         chains: [anvil],
@@ -196,7 +190,7 @@ describe(Sigillum.name, () => {
             transport: webSocket(),
           }),
       });
-      let _contract: Sigillum;
+      let _contract: SigillumOrdoAdministratorum;
 
       await connect(_wagmiConfig, {
         connector: mock({
@@ -204,14 +198,14 @@ describe(Sigillum.name, () => {
         }),
       });
 
-      _contract = await Sigillum.attach({
+      _contract = await SigillumOrdoAdministratorum.attach({
         address: contract.address(),
         silent: true,
         wagmiConfig: _wagmiConfig,
       });
 
       try {
-        await _contract.mint(privateKeyToAccount(generatePrivateKey()).address);
+        await _contract.mint(privateKeyToAccount(generatePrivateKey()).address, RankEnum.Novitiate);
       } catch (error) {
         expect((error as CallExecutionError).name).toBe('CallExecutionError');
 
@@ -225,8 +219,8 @@ describe(Sigillum.name, () => {
       const recipient = privateKeyToAccount(generatePrivateKey());
 
       try {
-        await contract.mint(recipient.address);
-        await contract.mint(recipient.address); // attempt to mint again
+        await contract.mint(recipient.address, RankEnum.Novitiate);
+        await contract.mint(recipient.address, RankEnum.Novitiate); // attempt to mint again
       } catch (error) {
         expect((error as CallExecutionError).name).toBe('CallExecutionError');
         expect((error as CallExecutionError).details).toContain(RECIPIENT_ALREADY_HAS_TOKEN);
@@ -235,6 +229,31 @@ describe(Sigillum.name, () => {
       }
 
       throw new Error('expected owner already has token error');
+    });
+
+    it('should mint a new token', async () => {
+      const recipient = privateKeyToAccount(generatePrivateKey());
+      const supply = await contract.supply();
+      let currentSupply: bigint;
+
+      await contract.mint(recipient.address, RankEnum.Novitiate);
+      currentSupply = await contract.supply();
+
+      expect(currentSupply).toBe(supply + BigInt(1));
+    });
+  });
+
+  describe('rank()', () => {
+    it('should return null if no token exists for owner', async () => {
+      const result = await contract.rank(notPermittedAccount.address);
+
+      expect(result).toBeNull();
+    });
+
+    it('should return the rank', async () => {
+      const result = await contract.rank(tokenHolderAccount.address);
+
+      expect(result).toEqual(tokenHolderRank);
     });
   });
 
@@ -254,7 +273,7 @@ describe(Sigillum.name, () => {
 
     it('should return the token metadata', async () => {
       const recipient = privateKeyToAccount(generatePrivateKey());
-      const { result } = await contract.mint(recipient.address); // mint a new token
+      const { result } = await contract.mint(recipient.address, RankEnum.Novitiate); // mint a new token
       let tokenMetadata: ITokenMetadata;
 
       tokenMetadata = await contract.tokenMetadata(result);
@@ -264,6 +283,20 @@ describe(Sigillum.name, () => {
       expect(tokenMetadata.id).toBe(Number(result));
       expect(tokenMetadata.name).toBe(name);
       expect(tokenMetadata.symbol).toBe(symbol);
+    });
+  });
+
+  describe('tokenOf()', () => {
+    it('should return null if no token exists for owner', async () => {
+      const result = await contract.tokenOf(notPermittedAccount.address);
+
+      expect(result).toBeNull();
+    });
+
+    it('should return the token ID', async () => {
+      const result = await contract.tokenOf(tokenHolderAccount.address);
+
+      expect(result).toEqual(tokenHolderTokenID);
     });
   });
 
@@ -279,7 +312,7 @@ describe(Sigillum.name, () => {
           }),
       });
       const start = new Date();
-      let _contract: Sigillum;
+      let _contract: SigillumOrdoAdministratorum;
       let proposal: Proposal;
 
       start.setSeconds(new Date().getSeconds() + 1); // 1 second later
@@ -300,7 +333,7 @@ describe(Sigillum.name, () => {
       });
 
       // vote with a not permitted address
-      _contract = await Sigillum.attach({
+      _contract = await SigillumOrdoAdministratorum.attach({
         address: contract.address(),
         silent: true,
         wagmiConfig: _wagmiConfig,
@@ -336,7 +369,7 @@ describe(Sigillum.name, () => {
           }),
       });
       const start = new Date();
-      let _contract: Sigillum;
+      let _contract: SigillumOrdoAdministratorum;
       let proposal: Proposal;
 
       start.setSeconds(new Date().getSeconds() + 1); // 1 second later
@@ -356,7 +389,7 @@ describe(Sigillum.name, () => {
         }),
       });
 
-      _contract = await Sigillum.attach({
+      _contract = await SigillumOrdoAdministratorum.attach({
         address: contract.address(),
         silent: true,
         wagmiConfig: _wagmiConfig,

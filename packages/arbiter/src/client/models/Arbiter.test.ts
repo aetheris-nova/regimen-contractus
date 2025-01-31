@@ -1,4 +1,3 @@
-import { Sigillum } from '@aetherisnova/sigillum';
 import { mock } from '@wagmi/connectors';
 import { type Config as WagmiConfig, createConfig, connect } from '@wagmi/core';
 import { type Address, createWalletClient, type PrivateKeyAccount, webSocket } from 'viem';
@@ -14,7 +13,7 @@ describe(Arbiter.name, () => {
   let contract: Arbiter;
   let deployerAccount: PrivateKeyAccount;
   let wagmiConfig: WagmiConfig;
-  let tokenContract: Sigillum;
+  let tokenContractAddress: Address;
 
   beforeAll(async () => {
     if (!process.env.ACCOUNT_0_PRIVATE_KEY) {
@@ -45,14 +44,7 @@ describe(Arbiter.name, () => {
   }, 60000);
 
   beforeEach(async () => {
-    tokenContract = await Sigillum.deploy({
-      arbiter: contract.address(),
-      description: 'The Sigillum that proves membership to the Ordo Administratorum.',
-      name: 'Sigillum Ordo Administratorum',
-      silent: true,
-      symbol: 'SOA',
-      wagmiConfig,
-    });
+    tokenContractAddress = privateKeyToAccount(generatePrivateKey()).address;
   });
 
   describe('addExecutor()', () => {
@@ -72,13 +64,13 @@ describe(Arbiter.name, () => {
 
   describe('addToken()', () => {
     it('should add a token to vote', async () => {
-      let canVote = await contract.eligibility(tokenContract.address());
+      let canVote = await contract.eligibility(tokenContractAddress);
 
       expect(canVote).toBe(false);
 
-      await contract.addToken(tokenContract.address());
+      await contract.addToken(tokenContractAddress);
 
-      canVote = await contract.eligibility(tokenContract.address());
+      canVote = await contract.eligibility(tokenContractAddress);
 
       expect(canVote).toBe(true);
     });
@@ -138,17 +130,17 @@ describe(Arbiter.name, () => {
       // arrange
       let canVote: boolean;
 
-      await contract.addToken(tokenContract.address());
+      await contract.addToken(tokenContractAddress);
 
-      canVote = await contract.eligibility(tokenContract.address());
+      canVote = await contract.eligibility(tokenContractAddress);
 
       expect(canVote).toBe(true);
 
       // assert
-      await contract.removeToken(tokenContract.address());
+      await contract.removeToken(tokenContractAddress);
 
       // act
-      canVote = await contract.eligibility(tokenContract.address());
+      canVote = await contract.eligibility(tokenContractAddress);
 
       expect(canVote).toBe(false);
     });

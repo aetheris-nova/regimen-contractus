@@ -12,6 +12,7 @@ jobs:
     outputs:
       arbiter: ${{ steps.filter.outputs.arbiter }}
       codex_aetherium: ${{ steps.filter.outputs.codex_aetherium }}
+      sigillum_ordo_administratorum: ${{ steps.filter.outputs.sigillum_ordo_administratorum }}
       sigillum: ${{ steps.filter.outputs.sigillum }}
       types: ${{ steps.filter.outputs.types }}
     steps:
@@ -26,6 +27,8 @@ jobs:
               - 'packages/codex-aetherium/**'
             sigillum:
               - 'packages/sigillum/**'
+            sigillum_ordo_administratorum:
+              - 'packages/sigillum-ordo-administratorum/**'
             types:
               - 'packages/types/**'
 
@@ -83,6 +86,16 @@ jobs:
     with:
       package_dir: "sigillum"
       package_name: "@aetherisnova/sigillum"
+      with_foundry: true
+
+  lint_build_test_sigillum_ordo_administratorum:
+    name: "Lint, Build & Test - @aetherisnova/sigillum-ordo-administratorum"
+    needs: [changed_files, validate_pr_title]
+    if: ${{ needs.changed_files.outputs.sigillum_ordo_administratorum == 'true' }}
+    uses: ./.github/workflows/lint_build_test.yml
+    with:
+      package_dir: "sigillum-ordo-administratorum"
+      package_name: "@aetherisnova/sigillum-ordo-administratorum"
       with_foundry: true
 
   lint_build_test_types:

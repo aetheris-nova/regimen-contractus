@@ -50,8 +50,20 @@ jobs:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # **MUST** be after arbiter and sigillum packages
-  release_codex_aetherium:
+  release_sigillum_ordo_administratorum:
     needs: [release_types, release_arbiter, release_sigillum]
+    name: "Release - @aetherisnova/sigillum-ordo-administratorum"
+    uses: ./.github/workflows/publish_release.yml
+    with:
+      package_dir: "sigillum-ordo-administratorum"
+      package_name: "@aetherisnova/sigillum-ordo-administratorum"
+      with_foundry: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # **MUST** be after arbiter, sigillum and sigillum-ordo-administratorum packages
+  release_codex_aetherium:
+    needs: [release_types, release_arbiter, release_sigillum, release_sigillum_ordo_administratorum]
     name: "Release - @aetherisnova/codex-aetherium"
     uses: ./.github/workflows/publish_release.yml
     with:

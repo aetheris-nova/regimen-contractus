@@ -10,7 +10,6 @@
 function main {
   # build workspace dependencies
   pnpm -F @aetherisnova/regimen-contractus-types run build
-  pnpm -F @aetherisnova/regimen-contractus-utils run build
   pnpm -F @aetherisnova/arbiter run build
 
   exit 0
