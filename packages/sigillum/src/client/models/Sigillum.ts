@@ -28,9 +28,11 @@ import type {
   IDeployOptions,
   IHasVotedOptions,
   ITokenMetadata,
+  ITokenOfResponse,
   IVoteOptions,
   IVoteResult,
-  TWithABIAndBytecode,
+  TWithExtendedAttachOptions,
+  TWithExtendedDeployOptions,
 } from '@client/types';
 
 export default class Sigillum {
@@ -50,6 +52,21 @@ export default class Sigillum {
    * protected static methods
    */
 
+  protected static async _attach<Class extends Sigillum>({
+    address,
+    Class,
+    debug = false,
+    silent = false,
+    wagmiConfig,
+  }: TWithExtendedAttachOptions<TAttachClientOptions>): Promise<Class> {
+    return new Class({
+      address,
+      debug,
+      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
+      wagmiConfig,
+    }) as Class;
+  }
+
   protected static async _deploy<Class extends Sigillum>({
     abi: _abi,
     arbiter,
@@ -61,7 +78,7 @@ export default class Sigillum {
     silent = false,
     symbol,
     wagmiConfig,
-  }: TWithABIAndBytecode<IDeployOptions>): Promise<Class> {
+  }: TWithExtendedDeployOptions<IDeployOptions>): Promise<Class> {
     const __function = 'deploy';
     const logger = createLogger(debug ? 'debug' : silent ? 'silent' : 'error');
     let hash: Hash;
@@ -95,24 +112,6 @@ export default class Sigillum {
 
       throw error;
     }
-  }
-
-  /**
-   * public static methods
-   */
-
-  public static async attach<Type extends Sigillum>({
-    debug = false,
-    address,
-    silent = false,
-    wagmiConfig,
-  }: TAttachClientOptions): Promise<Type> {
-    return new Sigillum({
-      address,
-      debug,
-      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
-      wagmiConfig,
-    }) as Type;
   }
 
   /**
@@ -153,6 +152,40 @@ export default class Sigillum {
       return {
         result: (logs[0].args as Record<'id', bigint>).id,
         transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${__function}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the token ID and the rank for a given owner.
+   * @param {Address} owner - The token ID.
+   * @returns {Promise<ITokenOfResponse | null>} A promise that resolves to the token ID and rank or null if the owner
+   * does not own a token.
+   * @public
+   */
+  protected async _tokenOf(owner: Address): Promise<ITokenOfResponse | null> {
+    const __function = 'symbol';
+
+    try {
+      const { id, rank } = await readContract(this._wagmiConfig, {
+        abi,
+        address: this._address,
+        args: [owner],
+        functionName: 'tokenOf',
+      });
+
+      // if the token id is 0, the owner has not token
+      if (id === BigInt(0)) {
+        return null;
+      }
+
+      return {
+        hashedRank: rank,
+        id,
       };
     } catch (error) {
       this._logger.error(`${Sigillum.name}#${__function}:`, error);
