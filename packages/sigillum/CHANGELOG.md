@@ -1,3 +1,10 @@
+# [@aetherisnova/sigillum-v1.1.0](https://github.com/aetheris-nova/regimen-contractus/compare/@aetherisnova/sigillum-v1.0.0...@aetherisnova/sigillum-v1.1.0) (2025-01-31)
+
+
+### Features
+
+* **sigillum-ordo-administratorum:** add ranks ([#5](https://github.com/aetheris-nova/regimen-contractus/issues/5)) ([0d7653e](https://github.com/aetheris-nova/regimen-contractus/commit/0d7653e167a93344285bd16fed3a7a2715a0548b))
+
 # @aetherisnova/sigillum-v1.0.0 (2025-01-30)
 
 
