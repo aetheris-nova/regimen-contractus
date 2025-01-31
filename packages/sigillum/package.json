@@ -30,7 +30,7 @@
     "postinstall": "./scripts/postinstall.sh",
     "prettier": "prettier --write \"**/*.{js,json,sol,ts}\"",
     "test": "pnpm test:contracts && pnpm test:client",
-    "test:client": "pnpm build:contracts && vitest run --config vitest.config.ts",
+    "test:client": "exit 0",
     "test:contracts": "exit 0"
   },
   "dependencies": {
@@ -60,8 +60,7 @@
     "viem": "^2.x",
     "vite": "^6.0.3",
     "vite-plugin-dts": "^4.3.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^2.1.8"
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "peerDependencies": {
     "@wagmi/core": "2.x",

@@ -17,11 +17,10 @@ import {
   type WaitForTransactionReceiptReturnType,
   writeContract,
 } from '@wagmi/core';
-import { Address, Hash, type Hex, parseEventLogs, ParseEventLogsReturnType } from 'viem';
+import { Address, Hash, keccak256, parseEventLogs, ParseEventLogsReturnType, toHex } from 'viem';
 
 // artifacts
 import { sigillumAbi as abi } from '@client/abis';
-import { bytecode } from '@dist/contracts/Sigillum.sol/Sigillum.json';
 
 // types
 import type {
@@ -31,6 +30,7 @@ import type {
   ITokenMetadata,
   IVoteOptions,
   IVoteResult,
+  TWithABIAndBytecode,
 } from '@client/types';
 
 export default class Sigillum {
@@ -39,7 +39,7 @@ export default class Sigillum {
   protected readonly _logger: ILogger;
   protected _wagmiConfig: WagmiConfig;
 
-  private constructor({ address, debug = false, logger, wagmiConfig }: INewClientOptions) {
+  protected constructor({ address, debug = false, logger, wagmiConfig }: INewClientOptions) {
     this._address = address;
     this._debug = debug;
     this._logger = logger;
@@ -47,32 +47,21 @@ export default class Sigillum {
   }
 
   /**
-   * public static methods
+   * protected static methods
    */
 
-  public static async attach({
-    debug = false,
-    address,
-    silent = false,
-    wagmiConfig,
-  }: TAttachClientOptions): Promise<Sigillum> {
-    return new Sigillum({
-      address,
-      debug,
-      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
-      wagmiConfig,
-    });
-  }
-
-  public static async deploy({
+  protected static async _deploy<Class extends Sigillum>({
+    abi: _abi,
     arbiter,
+    bytecode,
+    Class,
     debug = false,
     description,
     name,
     silent = false,
     symbol,
     wagmiConfig,
-  }: IDeployOptions): Promise<Sigillum> {
+  }: TWithABIAndBytecode<IDeployOptions>): Promise<Class> {
     const __function = 'deploy';
     const logger = createLogger(debug ? 'debug' : silent ? 'silent' : 'error');
     let hash: Hash;
@@ -80,9 +69,9 @@ export default class Sigillum {
 
     try {
       hash = await deployContract(wagmiConfig, {
-        abi,
+        abi: _abi,
         args: [name, symbol, description, arbiter],
-        bytecode: bytecode.object as Hex,
+        bytecode,
       });
       receipt = await waitForTransactionReceipt(wagmiConfig, { hash });
 
@@ -95,14 +84,78 @@ export default class Sigillum {
           `${Sigillum.name}#${__function}: deployed contract using "${getAccount(wagmiConfig).address}" with transaction hash "${hash}" on chain "${getChainId(wagmiConfig) ?? '-'}"`
         );
 
-      return new Sigillum({
+      return new Class({
         address: receipt.contractAddress,
         debug,
         logger,
         wagmiConfig,
-      });
+      }) as Class;
     } catch (error) {
       logger.error(`${Sigillum.name}#${__function}: failed to deploy contract`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * public static methods
+   */
+
+  public static async attach<Type extends Sigillum>({
+    debug = false,
+    address,
+    silent = false,
+    wagmiConfig,
+  }: TAttachClientOptions): Promise<Type> {
+    return new Sigillum({
+      address,
+      debug,
+      logger: createLogger(debug ? 'debug' : silent ? 'silent' : 'error'),
+      wagmiConfig,
+    }) as Type;
+  }
+
+  /**
+   * protected methods
+   */
+
+  /**
+   * Mints a new token to the recipient.
+   * @param {Address} recipient - The address of the recipient.
+   * @param {Rank} rank - The rank to give to the token.
+   * @returns {Promise<IStateChangeResult<bigint>>} A promise that resolves to the transaction and the new token ID.
+   * @public
+   */
+  protected async _mint<Rank extends string>(recipient: Address, rank: Rank): Promise<IStateChangeResult<bigint>> {
+    const __function = 'mint';
+    let logs: ParseEventLogsReturnType;
+    let hash: Hash;
+    let receipt: WaitForTransactionReceiptReturnType;
+
+    try {
+      hash = await writeContract(this._wagmiConfig, {
+        abi,
+        address: this._address,
+        args: [recipient, keccak256(toHex(rank))],
+        functionName: 'mint',
+      });
+      receipt = await waitForTransactionReceipt(this._wagmiConfig, { hash });
+      logs = parseEventLogs({
+        abi,
+        eventName: 'Transfer',
+        logs: receipt.logs,
+      });
+
+      if (!logs[0]) {
+        throw Error('no transfer event emitted');
+      }
+
+      return {
+        result: (logs[0].args as Record<'id', bigint>).id,
+        transaction: receipt,
+      };
+    } catch (error) {
+      this._logger.error(`${Sigillum.name}#${__function}:`, error);
 
       throw error;
     }
@@ -266,47 +319,6 @@ export default class Sigillum {
   }
 
   /**
-   * Mints a new token to the recipient.
-   * @param {Address} recipient - The address of the recipient.
-   * @returns {Promise<IStateChangeResult<bigint>>} A promise that resolves to the transaction and the new token ID.
-   * @public
-   */
-  public async mint(recipient: Address): Promise<IStateChangeResult<bigint>> {
-    const __function = 'mint';
-    let logs: ParseEventLogsReturnType;
-    let hash: Hash;
-    let receipt: WaitForTransactionReceiptReturnType;
-
-    try {
-      hash = await writeContract(this._wagmiConfig, {
-        abi,
-        address: this._address,
-        args: [recipient],
-        functionName: 'mint',
-      });
-      receipt = await waitForTransactionReceipt(this._wagmiConfig, { hash });
-      logs = parseEventLogs({
-        abi,
-        eventName: 'Transfer',
-        logs: receipt.logs,
-      });
-
-      if (!logs[0]) {
-        throw Error('no transfer event emitted');
-      }
-
-      return {
-        result: (logs[0].args as Record<'id', bigint>).id,
-        transaction: receipt,
-      };
-    } catch (error) {
-      this._logger.error(`${Sigillum.name}#${__function}:`, error);
-
-      throw error;
-    }
-  }
-
-  /**
    * Gets the name of the token.
    * @returns {Promise<string>} A promise that resolves to the name of the token.
    * @public
@@ -328,7 +340,7 @@ export default class Sigillum {
   }
 
   /**
-   * Updates the arbiter contract. Must have the `ISSUER_ROLE`.
+   * Updates the arbiter contract.
    * @param {Address} arbiter - The arbiter contract address.
    * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
    * @public

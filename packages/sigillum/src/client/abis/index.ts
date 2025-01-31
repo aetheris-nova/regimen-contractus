@@ -4,30 +4,6 @@
 
 export const sigillumAbi = [
   {
-    type: 'constructor',
-    inputs: [
-      { name: '_name', internalType: 'string', type: 'string' },
-      { name: '_symbol', internalType: 'string', type: 'string' },
-      { name: '_description', internalType: 'string', type: 'string' },
-      { name: '_arbiter', internalType: 'address', type: 'address' },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'DEFAULT_ADMIN_ROLE',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'ISSUER_ROLE',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    stateMutability: 'view',
-  },
-  {
     type: 'function',
     inputs: [
       { name: 'spender', internalType: 'address', type: 'address' },
@@ -88,33 +64,6 @@ export const sigillumAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'role', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'getRoleAdmin',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'account', internalType: 'address', type: 'address' },
-    ],
-    name: 'grantRole',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'account', internalType: 'address', type: 'address' },
-    ],
-    name: 'hasRole',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
     inputs: [
       { name: 'tokenID', internalType: 'uint256', type: 'uint256' },
       { name: 'proposal', internalType: 'address', type: 'address' },
@@ -138,7 +87,10 @@ export const sigillumAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'recipient', internalType: 'address', type: 'address' }],
+    inputs: [
+      { name: 'recipient', internalType: 'address', type: 'address' },
+      { name: 'rank', internalType: 'bytes32', type: 'bytes32' },
+    ],
     name: 'mint',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
@@ -156,37 +108,6 @@ export const sigillumAbi = [
     name: 'ownerOf',
     outputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'title', internalType: 'string', type: 'string' },
-      { name: 'start', internalType: 'uint48', type: 'uint48' },
-      { name: 'duration', internalType: 'uint32', type: 'uint32' },
-    ],
-    name: 'propose',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'callerConfirmation', internalType: 'address', type: 'address' },
-    ],
-    name: 'renounceRole',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'role', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'account', internalType: 'address', type: 'address' },
-    ],
-    name: 'revokeRole',
-    outputs: [],
-    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -247,6 +168,23 @@ export const sigillumAbi = [
     inputs: [],
     name: 'symbol',
     outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'tokenOf',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct Sigillum.Token',
+        type: 'tuple',
+        components: [
+          { name: 'id', internalType: 'uint256', type: 'uint256' },
+          { name: 'rank', internalType: 'bytes32', type: 'bytes32' },
+        ],
+      },
+    ],
     stateMutability: 'view',
   },
   {
@@ -326,50 +264,11 @@ export const sigillumAbi = [
     type: 'event',
     anonymous: false,
     inputs: [
-      { name: 'role', internalType: 'bytes32', type: 'bytes32', indexed: true },
-      { name: 'previousAdminRole', internalType: 'bytes32', type: 'bytes32', indexed: true },
-      { name: 'newAdminRole', internalType: 'bytes32', type: 'bytes32', indexed: true },
-    ],
-    name: 'RoleAdminChanged',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'role', internalType: 'bytes32', type: 'bytes32', indexed: true },
-      { name: 'account', internalType: 'address', type: 'address', indexed: true },
-      { name: 'sender', internalType: 'address', type: 'address', indexed: true },
-    ],
-    name: 'RoleGranted',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'role', internalType: 'bytes32', type: 'bytes32', indexed: true },
-      { name: 'account', internalType: 'address', type: 'address', indexed: true },
-      { name: 'sender', internalType: 'address', type: 'address', indexed: true },
-    ],
-    name: 'RoleRevoked',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
       { name: 'from', internalType: 'address', type: 'address', indexed: true },
       { name: 'to', internalType: 'address', type: 'address', indexed: true },
       { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
     ],
     name: 'Transfer',
-  },
-  { type: 'error', inputs: [], name: 'AccessControlBadConfirmation' },
-  {
-    type: 'error',
-    inputs: [
-      { name: 'account', internalType: 'address', type: 'address' },
-      { name: 'neededRole', internalType: 'bytes32', type: 'bytes32' },
-    ],
-    name: 'AccessControlUnauthorizedAccount',
   },
   {
     type: 'error',
