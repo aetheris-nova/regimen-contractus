@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import { AccessControl } from '@openzeppelin-contracts/access/AccessControl.sol';
-import { ISigillum } from '@aetherisnova/sigillum/ISigillum.sol';
 
 // contracts
 import { IProposal } from './IProposal.sol';
@@ -20,8 +19,6 @@ contract Arbiter is AccessControl {
   bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
 
   // internal variables
-  mapping(address => bytes32[]) internal _custodians;
-  mapping(address => bytes32[]) internal _executors;
   mapping(address => bool) internal _voterToken;
 
   // events
@@ -30,22 +27,15 @@ contract Arbiter is AccessControl {
   event TokenRemoved(address indexed token);
   event Debug(string);
 
-  constructor(address custodian, bytes32 rank) {
-    _custodians[custodian] = [rank];
+  constructor() {
+    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(CUSTODIAN_ROLE, msg.sender);
+    _grantRole(EXECUTOR_ROLE, msg.sender);
   }
 
   /**
    * modifier functions
    */
-
-  //  modifier onlyCustodians(uint256 tokenID) {
-  //    ISigillum token = ISigillum(msg.sender);
-  //
-  //    token.tokenOf();
-  //
-  //    require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
-  //    _;
-  //  }
 
   modifier onlyTokenOwner() {
     require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
@@ -97,7 +87,7 @@ contract Arbiter is AccessControl {
    * * **MUST** have the `CUSTODIAN_ROLE`.
    * @param token The token address to add.
    */
-  function addToken(address token) external onlyTokenOwner onlyRole(CUSTODIAN_ROLE) {
+  function addToken(address token) external onlyRole(CUSTODIAN_ROLE) {
     _voterToken[token] = true;
 
     emit TokenAdded(token);
