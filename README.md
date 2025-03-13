@@ -14,20 +14,20 @@
 
 ---
 
-### Table Of Contents
+### Table of contents
 
 * [1. Overview](#-1-overview)
-  - [1.1. Monorepo Project Structure](#11-monorepo-project-structure)
-* [2. Getting Started](#-2-getting-started)
+  - [1.1. Monorepo project structure](#11-monorepo-project-structure)
+* [2. Getting started](#-2-getting-started)
   - [2.1. Requirements](#21-requirements)
   - [2.2. Installation](#22-installation)
 * [3. Appendix](#-3-appendix)
   - [3.1. Packages](#31-packages)
-* [4. How To Contribute](#-4-how-to-contribute)
+* [4. How to contribute](#-4-how-to-contribute)
 
 ## 🗂️ 1. Overview
 
-### 1.1. Monorepo Project Structure
+### 1.1. Monorepo project structure
 
 The repo follows the following structure:
 
@@ -64,7 +64,7 @@ Each package **SHOULD** reflect the name of the package, i.e. the `packages/sigi
 * `package.json` - The license for the package.
 * `README.md` - Contains installation and usage instructions relevant to the package.
 
-## 🪄 2. Getting Started
+## 🪄 2. Getting started
 
 ### 2.1. Requirements
 
@@ -88,18 +88,19 @@ pnpm install
 
 ### 3.1. Packages
 
-| Name                                                      | Visibility | Description                                                                                         | Package                                                                                                                           |
-|-----------------------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| [`arbiter`](./packages/arbiter/README.md)                 | `public`   | A smart contract that can create proposals and allows eligible sigillums to vote for the proposals. | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Farbiter)](https://www.npmjs.com/package/%40aetherisnova/arbiter)   |
-| [`codex-aetherium`](./packages/codex-aetherium/README.md) | `public`   | The frontend application that enables Aetherii to create, vote and execute proposals.               | -                                                                                                                                 |
-| [`sigillum`](./packages/sigillum/README.md)               | `public`   | The basic smart contract for the Ordos membership NFTs.                                             | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Fsigillum)](https://www.npmjs.com/package/%40aetherisnova/sigillum) |
-| [`types`](./packages/types/README.md)                     | `private`  | TypeScript types for the contract clients.                                                          | -                                                                                                                                 |
+| Name                                                                                  | Visibility | Description                                                                                         | Package                                                                                                                                                                     |
+|---------------------------------------------------------------------------------------|------------|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`arbiter`](./packages/arbiter/README.md)                                             | `public`   | A smart contract that can create proposals and allows eligible sigillums to vote for the proposals. | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Farbiter)](https://www.npmjs.com/package/%40aetherisnova/arbiter)                                             |
+| [`codex-aetherium`](./packages/codex-aetherium/README.md)                             | `public`   | The frontend application that enables Aetherii to create, vote and execute proposals.               | -                                                                                                                                                                           |
+| [`sigillum`](./packages/sigillum/README.md)                                           | `public`   | The basic smart contract for the Ordos membership NFTs.                                             | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Fsigillum)](https://www.npmjs.com/package/%40aetherisnova/sigillum)                                           |
+| [`sigillum-ordo-administratorum`](./packages/sigillum-ordo-administratorum/README.md) | `public`   | The smart contract for the Ordo Administratorum membership NFT.                                     | [![NPM Version](https://img.shields.io/npm/v/%40aetherisnova%2Fsigillum-ordo-administratorum)](https://www.npmjs.com/package/%40aetherisnova/sigillum-ordo-administratorum) |
+| [`types`](./packages/types/README.md)                                                 | `private`  | TypeScript types for the contract clients.                                                          | -                                                                                                                                                                           |
 
 <sup>[Back to top ^][table-of-contents]</sup>
 
-## 👏 4. How To Contribute
+## 👏 4. How to contribute
 
-Please read the [**Contributing Guide**](./CONTRIBUTING.md) to learn about the development process.
+Please read the [**Contributing guide**](./CONTRIBUTING.md) to learn about the development process.
 
 <sup>[Back to top ^][table-of-contents]</sup>
 
