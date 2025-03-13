@@ -35,35 +35,37 @@
   },
   "dependencies": {
     "@aetherisnova/regimen-contractus-types": "workspace:^",
-    "@aetherisnova/types": "^1.2.0",
-    "@aetherisnova/utils": "^1.2.0",
-    "@stablelib/base64": "^2.0.0",
-    "@stablelib/utf8": "^2.0.0"
+    "@aetherisnova/types": "catalog:",
+    "@aetherisnova/utils": "catalog:",
+    "@stablelib/base64": "catalog:",
+    "@stablelib/utf8": "catalog:"
   },
   "devDependencies": {
     "@aetherisnova/arbiter": "workspace:^",
-    "@types/node": "^22.10.1",
-    "@wagmi/cli": "^2.2.0",
-    "@wagmi/connectors": "^5.7.5",
-    "@wagmi/core": "^2.x",
-    "chalk": "^5.3.0",
-    "concurrently": "^9.1.0",
-    "dotenv": "^16.4.7",
-    "eslint": "^9.16.0",
-    "eslint-config-prettier": "^9.1.0",
-    "globals": "^15.13.0",
-    "prettier-plugin-solidity": "^1.4.1",
-    "solhint": "^5.0.3",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.18.0",
-    "viem": "^2.x",
-    "vite": "^6.0.3",
-    "vite-plugin-dts": "^4.3.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "@types/node": "catalog:",
+    "@wagmi/cli": "catalog:",
+    "@wagmi/connectors": "catalog:",
+    "@wagmi/core": "catalog:",
+    "chalk": "catalog:",
+    "concurrently": "catalog:",
+    "dotenv": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-solidity": "catalog:",
+    "shx": "catalog:",
+    "solhint": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "viem": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vite-tsconfig-paths": "catalog:"
   },
   "peerDependencies": {
-    "@wagmi/core": "2.x",
-    "viem": "2.x"
+    "@wagmi/core": "catalog:",
+    "viem": "catalog:"
   }
 }
