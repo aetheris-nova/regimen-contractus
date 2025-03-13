@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@aetherisnova/arbiter": "workspace:^",
+    "@eslint/js": "catalog:",
     "@types/node": "catalog:",
     "@wagmi/cli": "catalog:",
     "@wagmi/connectors": "catalog:",

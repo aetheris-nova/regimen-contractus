@@ -39,6 +39,7 @@
     "@aetherisnova/utils": "catalog:"
   },
   "devDependencies": {
+    "@eslint/js": "catalog:",
     "@types/node": "catalog:",
     "@wagmi/cli": "catalog:",
     "@wagmi/connectors": "catalog:",
