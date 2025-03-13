@@ -1,7 +1,5 @@
 <div align="center">
-  <a href="https://aetherisnova.org">
-    <img alt="An ornate golden compass surrounded by orbs" src="docs/images/emblem@128x128.png" height="128" />
-  </a>
+  <img alt="An ornate golden compass surrounded by orbs" src="https://github.com/aetheris-nova/regimen-contractus/blob/main/images/emblem@128x128.png" height="128" />
 </div>
 
 <div align="center">
@@ -20,21 +18,21 @@
 
 ---
 
-### Table Of Contents
+### Table of contents
 
 * [1. Overview](#-1-overview)
-* [2. Getting Started](#-2-getting-started)
+* [2. Getting started](#-2-getting-started)
   - [2.1. Installation](#21-installation)
   - [2.2. Client](#22-client)
 * [3. Appendix](#-3-appendix)
-  - [3.1. Useful Commands](#31-useful-commands)
+  - [3.1. Useful commands](#31-useful-commands)
 * [4. License](#-4-license)
 
 ## 🗂️ 1. Overview
 
 TODO.
 
-## 🪄 2. Getting Started
+## 🪄 2. Getting started
 
 ### 2.1. Installation
 
@@ -56,7 +54,7 @@ TODO.
 
 ## 📑 3. Appendix
 
-### 3.1. Useful Commands
+### 3.1. Useful commands
 
 | Command                | Description                                                                                                                                                                  |
 |------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
