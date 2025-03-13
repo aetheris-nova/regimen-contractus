@@ -9,13 +9,9 @@ import { Strings } from '@openzeppelin-contracts/utils/Strings.sol';
 import { ERC721 } from 'solmate/tokens/ERC721.sol';
 
 abstract contract Sigillum is ERC721 {
-  struct Token {
-    uint256 id;
-    bytes32 rank;
-  }
-
   // private variables
-  mapping(address => Token) internal _tokenOf;
+  mapping(address => uint256) internal _tokenOf;
+  mapping(uint256 => bytes32) internal _rank;
 
   // public variables
   address public arbiter;
@@ -53,7 +49,9 @@ abstract contract Sigillum is ERC721 {
   }
 
   modifier onlyRank(bytes32 rank) {
-    require(_tokenOf[msg.sender].rank == rank, 'INVALID_RANK');
+    uint256 id = _tokenOf[msg.sender];
+
+    require(_rank[id] == rank, 'INVALID_RANK');
     _;
   }
 
@@ -66,7 +64,7 @@ abstract contract Sigillum is ERC721 {
    * @param owner The owner to check.
    */
   function _checkTokenOwnership(address owner) internal view {
-    require(_tokenOf[owner].id == 0, 'RECIPIENT_ALREADY_HAS_TOKEN');
+    require(_tokenOf[owner] == 0, 'RECIPIENT_ALREADY_HAS_TOKEN');
   }
 
   /**
@@ -75,9 +73,9 @@ abstract contract Sigillum is ERC721 {
    * @param to The owner to transfer the token to.
    */
   function _transferToken(address from, address to) internal {
-    Token memory token = _tokenOf[from];
+    uint256 id = _tokenOf[from];
 
-    _tokenOf[to] = token;
+    _tokenOf[to] = id;
 
     delete _tokenOf[from];
   }
@@ -101,6 +99,7 @@ abstract contract Sigillum is ERC721 {
     super._burn(id);
 
     delete _tokenOf[owner];
+    delete _rank[id];
 
     supply = supply - 1;
   }

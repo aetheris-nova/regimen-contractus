@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import { AccessControl } from '@openzeppelin-contracts/access/AccessControl.sol';
+import { ISigillum } from '@aetherisnova/sigillum/ISigillum.sol';
 
 // contracts
 import { IProposal } from './IProposal.sol';
@@ -18,8 +19,10 @@ contract Arbiter is AccessControl {
   bytes32 public constant CUSTODIAN_ROLE = keccak256('CUSTODIAN_ROLE');
   bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
 
-  // variables
-  mapping(address => bool) internal _allowedTokens;
+  // internal variables
+  mapping(address => bytes32[]) internal _custodians;
+  mapping(address => bytes32[]) internal _executors;
+  mapping(address => bool) internal _voterToken;
 
   // events
   event ProposalCreated(address contractAddress, address proposer, uint48 start, uint32 duration);
@@ -27,10 +30,26 @@ contract Arbiter is AccessControl {
   event TokenRemoved(address indexed token);
   event Debug(string);
 
-  constructor() {
-    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    _grantRole(CUSTODIAN_ROLE, msg.sender);
-    _grantRole(EXECUTOR_ROLE, msg.sender);
+  constructor(address custodian, bytes32 rank) {
+    _custodians[custodian] = [rank];
+  }
+
+  /**
+   * modifier functions
+   */
+
+  modifier onlyCustodians(uint256 tokenID) {
+    ISigillum token = ISigillum(msg.sender);
+
+    token.tokenOf();
+
+    require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+    _;
+  }
+
+  modifier onlyTokenOwner() {
+    require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+    _;
   }
 
   /**
@@ -43,7 +62,7 @@ contract Arbiter is AccessControl {
    * @return True if the token can vote, false otherwise.
    */
   function eligibility(address token) external view returns (bool) {
-    return _allowedTokens[token];
+    return _voterToken[token];
   }
 
   /**
@@ -54,9 +73,7 @@ contract Arbiter is AccessControl {
    * @param proposal The proposal to check.
    * @return Whether the token has voted and what choice they made.
    */
-  function hasVoted(uint256 tokenID, address proposal) external view returns (uint8, bool) {
-    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
-
+  function hasVoted(uint256 tokenID, address proposal) external view onlyTokenOwner returns (uint8, bool) {
     IProposal proposalContract = IProposal(proposal);
 
     return proposalContract.hasVoted(msg.sender, tokenID);
@@ -80,8 +97,8 @@ contract Arbiter is AccessControl {
    * * **MUST** have the `CUSTODIAN_ROLE`.
    * @param token The token address to add.
    */
-  function addToken(address token) external onlyRole(CUSTODIAN_ROLE) {
-    _allowedTokens[token] = true;
+  function addToken(address token) external onlyTokenOwner onlyRole(CUSTODIAN_ROLE) {
+    _voterToken[token] = true;
 
     emit TokenAdded(token);
   }
@@ -144,7 +161,7 @@ contract Arbiter is AccessControl {
    * @param token The token address to remove.
    */
   function removeToken(address token) external onlyRole(CUSTODIAN_ROLE) {
-    _allowedTokens[token] = false;
+    _voterToken[token] = false;
 
     emit TokenRemoved(token);
   }
@@ -157,9 +174,7 @@ contract Arbiter is AccessControl {
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
-  function vote(uint256 tokenID, address proposal, uint8 choice) external {
-    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
-
+  function vote(uint256 tokenID, address proposal, uint8 choice) external onlyTokenOwner {
     IProposal proposalContract = IProposal(proposal);
 
     proposalContract.vote(msg.sender, tokenID, choice);

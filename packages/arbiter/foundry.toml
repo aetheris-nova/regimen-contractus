@@ -1,4 +1,5 @@
 [profile.default]
+allow_paths = ["../sigillum"]
 extra_output_files = [
   "abi",
   "evm.bytecode"
