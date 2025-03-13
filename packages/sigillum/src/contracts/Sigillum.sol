@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.24;
 
-import { Arbiter } from '@aetherisnova/arbiter/Arbiter.sol';
 import { IArbiter } from '@aetherisnova/arbiter/IArbiter.sol';
 import { IProposal } from '@aetherisnova/arbiter/IProposal.sol';
 import { Base64 } from '@openzeppelin-contracts/utils/Base64.sol';
@@ -9,9 +8,13 @@ import { Strings } from '@openzeppelin-contracts/utils/Strings.sol';
 import { ERC721 } from 'solmate/tokens/ERC721.sol';
 
 abstract contract Sigillum is ERC721 {
+  struct Token {
+    uint256 id;
+    bytes32 rank;
+  }
+
   // private variables
-  mapping(address => uint256) internal _tokenOf;
-  mapping(uint256 => bytes32) internal _rank;
+  mapping(address => Token) internal _tokenOf;
 
   // public variables
   address public arbiter;
@@ -49,9 +52,7 @@ abstract contract Sigillum is ERC721 {
   }
 
   modifier onlyRank(bytes32 rank) {
-    uint256 id = _tokenOf[msg.sender];
-
-    require(_rank[id] == rank, 'INVALID_RANK');
+    require(_tokenOf[msg.sender].rank == rank, 'INVALID_RANK');
     _;
   }
 
@@ -64,7 +65,7 @@ abstract contract Sigillum is ERC721 {
    * @param owner The owner to check.
    */
   function _checkTokenOwnership(address owner) internal view {
-    require(_tokenOf[owner] == 0, 'RECIPIENT_ALREADY_HAS_TOKEN');
+    require(_tokenOf[owner].id == 0, 'RECIPIENT_ALREADY_HAS_TOKEN');
   }
 
   /**
@@ -73,9 +74,9 @@ abstract contract Sigillum is ERC721 {
    * @param to The owner to transfer the token to.
    */
   function _transferToken(address from, address to) internal {
-    uint256 id = _tokenOf[from];
+    Token memory token = _tokenOf[from];
 
-    _tokenOf[to] = id;
+    _tokenOf[to] = token;
 
     delete _tokenOf[from];
   }
@@ -99,7 +100,6 @@ abstract contract Sigillum is ERC721 {
     super._burn(id);
 
     delete _tokenOf[owner];
-    delete _rank[id];
 
     supply = supply - 1;
   }

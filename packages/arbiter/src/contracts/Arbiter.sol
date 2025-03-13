@@ -38,14 +38,14 @@ contract Arbiter is AccessControl {
    * modifier functions
    */
 
-  modifier onlyCustodians(uint256 tokenID) {
-    ISigillum token = ISigillum(msg.sender);
-
-    token.tokenOf();
-
-    require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
-    _;
-  }
+  //  modifier onlyCustodians(uint256 tokenID) {
+  //    ISigillum token = ISigillum(msg.sender);
+  //
+  //    token.tokenOf();
+  //
+  //    require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+  //    _;
+  //  }
 
   modifier onlyTokenOwner() {
     require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
