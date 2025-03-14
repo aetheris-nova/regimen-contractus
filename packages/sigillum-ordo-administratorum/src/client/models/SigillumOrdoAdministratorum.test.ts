@@ -346,7 +346,6 @@ describe(SigillumOrdoAdministratorum.name, () => {
         await _contract.vote({
           choice: VoteChoiceEnum.Accept,
           proposal: proposal.address(),
-          tokenID: tokenHolderTokenID, // use a token that is not owned by the token signer
         });
       } catch (error) {
         expect((error as CallExecutionError).name).toBe('CallExecutionError');
@@ -401,7 +400,6 @@ describe(SigillumOrdoAdministratorum.name, () => {
       await _contract.vote({
         choice: VoteChoiceEnum.Accept,
         proposal: proposal.address(),
-        tokenID: tokenHolderTokenID,
       });
     });
   });

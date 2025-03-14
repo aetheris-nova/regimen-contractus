@@ -6,7 +6,6 @@ import { VoteChoiceEnum } from '@client/enums';
 interface IVoteOptions {
   choice: VoteChoiceEnum;
   proposal: Address;
-  tokenID: bigint;
 }
 
 export default IVoteOptions;

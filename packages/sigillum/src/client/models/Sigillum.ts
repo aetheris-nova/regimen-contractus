@@ -26,7 +26,6 @@ import { sigillumAbi as abi } from '@client/abis';
 import type {
   IContractMetadata,
   IDeployOptions,
-  IHasVotedOptions,
   ITokenMetadata,
   ITokenOfResponse,
   IVoteOptions,
@@ -96,10 +95,11 @@ export default class Sigillum {
         throw new Error('no contract address found');
       }
 
-      debug &&
+      if (debug) {
         logger.debug(
           `${Sigillum.name}#${__function}: deployed contract using "${getAccount(wagmiConfig).address}" with transaction hash "${hash}" on chain "${getChainId(wagmiConfig) ?? '-'}"`
         );
+      }
 
       return new Class({
         address: receipt.contractAddress,
@@ -324,18 +324,18 @@ export default class Sigillum {
 
   /**
    * Gets the vote for a given `proposal`.
-   * @param {IHasVotedOptions} options - The token ID and the address of the proposal.
+   * @param {Address} proposal - The address of the proposal contract.
    * @returns {Promise<IVoteResult>} A promise that resolves to the vote result for the proposal.
    * @public
    */
-  public async hasVoted({ proposal, tokenID }: IHasVotedOptions): Promise<IVoteResult> {
+  public async hasVoted(proposal: Address): Promise<IVoteResult> {
     const __function = 'hasVoted';
 
     try {
       const [choice, voted] = await readContract(this._wagmiConfig, {
         abi,
         address: this._address,
-        args: [tokenID, proposal],
+        args: [proposal],
         functionName: 'hasVoted',
       });
 
@@ -517,7 +517,7 @@ export default class Sigillum {
    * @returns {Promise<IStateChangeResult<null>>} A promise that resolves to the transaction.
    * @public
    */
-  public async vote({ choice, proposal, tokenID }: IVoteOptions): Promise<IStateChangeResult<null>> {
+  public async vote({ choice, proposal }: IVoteOptions): Promise<IStateChangeResult<null>> {
     const __function = 'vote';
     let hash: Hash;
     let receipt: WaitForTransactionReceiptReturnType;
@@ -526,7 +526,7 @@ export default class Sigillum {
       hash = await writeContract(this._wagmiConfig, {
         abi,
         address: this._address,
-        args: [tokenID, proposal, choice],
+        args: [proposal, choice],
         functionName: 'vote',
       });
       receipt = await waitForTransactionReceipt(this._wagmiConfig, { hash });

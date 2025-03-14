@@ -64,10 +64,7 @@ export const sigillumAbi = [
   },
   {
     type: 'function',
-    inputs: [
-      { name: 'tokenID', internalType: 'uint256', type: 'uint256' },
-      { name: 'proposal', internalType: 'address', type: 'address' },
-    ],
+    inputs: [{ name: 'proposal', internalType: 'address', type: 'address' }],
     name: 'hasVoted',
     outputs: [
       { name: '', internalType: 'uint8', type: 'uint8' },
@@ -215,7 +212,6 @@ export const sigillumAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'tokenID', internalType: 'uint256', type: 'uint256' },
       { name: 'proposal', internalType: 'address', type: 'address' },
       { name: 'choice', internalType: 'uint8', type: 'uint8' },
     ],

@@ -18,8 +18,8 @@ contract Arbiter is AccessControl {
   bytes32 public constant CUSTODIAN_ROLE = keccak256('CUSTODIAN_ROLE');
   bytes32 public constant EXECUTOR_ROLE = keccak256('EXECUTOR_ROLE');
 
-  // variables
-  mapping(address => bool) internal _allowedTokens;
+  // internal variables
+  mapping(address => bool) internal _voterToken;
 
   // events
   event ProposalCreated(address contractAddress, address proposer, uint48 start, uint32 duration);
@@ -34,6 +34,15 @@ contract Arbiter is AccessControl {
   }
 
   /**
+   * modifier functions
+   */
+
+  modifier onlyTokenOwner() {
+    require(_voterToken[msg.sender], 'TOKEN_NOT_ELIGIBLE');
+    _;
+  }
+
+  /**
    * external functions - read
    */
 
@@ -43,7 +52,7 @@ contract Arbiter is AccessControl {
    * @return True if the token can vote, false otherwise.
    */
   function eligibility(address token) external view returns (bool) {
-    return _allowedTokens[token];
+    return _voterToken[token];
   }
 
   /**
@@ -54,9 +63,7 @@ contract Arbiter is AccessControl {
    * @param proposal The proposal to check.
    * @return Whether the token has voted and what choice they made.
    */
-  function hasVoted(uint256 tokenID, address proposal) external view returns (uint8, bool) {
-    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
-
+  function hasVoted(uint256 tokenID, address proposal) external view onlyTokenOwner returns (uint8, bool) {
     IProposal proposalContract = IProposal(proposal);
 
     return proposalContract.hasVoted(msg.sender, tokenID);
@@ -81,7 +88,7 @@ contract Arbiter is AccessControl {
    * @param token The token address to add.
    */
   function addToken(address token) external onlyRole(CUSTODIAN_ROLE) {
-    _allowedTokens[token] = true;
+    _voterToken[token] = true;
 
     emit TokenAdded(token);
   }
@@ -144,7 +151,7 @@ contract Arbiter is AccessControl {
    * @param token The token address to remove.
    */
   function removeToken(address token) external onlyRole(CUSTODIAN_ROLE) {
-    _allowedTokens[token] = false;
+    _voterToken[token] = false;
 
     emit TokenRemoved(token);
   }
@@ -157,9 +164,7 @@ contract Arbiter is AccessControl {
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
-  function vote(uint256 tokenID, address proposal, uint8 choice) external {
-    require(_allowedTokens[msg.sender], 'TOKEN_NOT_ELIGIBLE');
-
+  function vote(uint256 tokenID, address proposal, uint8 choice) external onlyTokenOwner {
     IProposal proposalContract = IProposal(proposal);
 
     proposalContract.vote(msg.sender, tokenID, choice);

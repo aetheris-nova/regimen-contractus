@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.24;
 
-import { Arbiter } from '@aetherisnova/arbiter/Arbiter.sol';
 import { IArbiter } from '@aetherisnova/arbiter/IArbiter.sol';
 import { IProposal } from '@aetherisnova/arbiter/IProposal.sol';
 import { Base64 } from '@openzeppelin-contracts/utils/Base64.sol';
@@ -46,11 +45,6 @@ abstract contract Sigillum is ERC721 {
   /**
    * modifier functions - write
    */
-
-  modifier onlyOwnerOf(uint256 tokenID) {
-    require(_ownerOf[tokenID] == msg.sender, 'NOT_OWNER_OF_TOKEN');
-    _;
-  }
 
   modifier onlyRank(bytes32 rank) {
     require(_tokenOf[msg.sender].rank == rank, 'INVALID_RANK');
@@ -177,14 +171,17 @@ abstract contract Sigillum is ERC721 {
    * @notice Gets the vote for a given `proposal`.
    * @dev
    * * Sender **MUST** be a token holder.
-   * @param tokenID The token ID.
    * @param proposal The proposal to check.
    * @return Whether the sender has voted and what choice they made.
    */
-  function hasVoted(uint256 tokenID, address proposal) external view onlyOwnerOf(tokenID) returns (uint8, bool) {
+  function hasVoted(address proposal) external view returns (uint8, bool) {
+    Token memory token = _tokenOf[msg.sender];
+
+    require(token.id != 0, 'NOT_OWNER_OF_TOKEN');
+
     IArbiter arbiterContract = IArbiter(arbiter);
 
-    return arbiterContract.hasVoted(tokenID, proposal);
+    return arbiterContract.hasVoted(token.id, proposal);
   }
 
   function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721) returns (bool) {
@@ -279,14 +276,17 @@ abstract contract Sigillum is ERC721 {
   /**
    * @notice Votes for a proposal.
    * @dev
-   * * Sender **MUST** be the token holder.
-   * @param tokenID The token ID.
+   * * Sender **MUST** be a token holder.
    * @param proposal The address of the proposal.
    * @param choice The choice of the voter. Should be one of: Abstain = 0, Accept = 1, Reject = 2.
    */
-  function vote(uint256 tokenID, address proposal, uint8 choice) external onlyOwnerOf(tokenID) {
+  function vote(address proposal, uint8 choice) external {
+    Token memory token = _tokenOf[msg.sender];
+
+    require(token.id != 0, 'NOT_OWNER_OF_TOKEN');
+
     IArbiter arbiterContract = IArbiter(arbiter);
 
-    arbiterContract.vote(tokenID, proposal, choice);
+    arbiterContract.vote(token.id, proposal, choice);
   }
 }
