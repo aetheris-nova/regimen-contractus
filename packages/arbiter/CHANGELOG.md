@@ -1,3 +1,10 @@
+# [@aetherisnova/arbiter-v1.2.0](https://github.com/aetheris-nova/regimen-contractus/compare/@aetherisnova/arbiter-v1.1.0...@aetherisnova/arbiter-v1.2.0) (2025-03-14)
+
+
+### Features
+
+* use inferred token id for voting ([#7](https://github.com/aetheris-nova/regimen-contractus/issues/7)) ([b31ff96](https://github.com/aetheris-nova/regimen-contractus/commit/b31ff9688f80e1a2e97927ff31336820d7aa564c))
+
 # [@aetherisnova/arbiter-v1.1.0](https://github.com/aetheris-nova/regimen-contractus/compare/@aetherisnova/arbiter-v1.0.0...@aetherisnova/arbiter-v1.1.0) (2025-01-31)
 
 

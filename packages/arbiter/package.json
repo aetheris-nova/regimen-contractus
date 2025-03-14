@@ -1,6 +1,6 @@
 {
   "name": "@aetherisnova/arbiter",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": false,
   "description": "The Arbiter schema facilitates the submission of proposals and allows for members of the Ordos to pledge their support.",
   "repository": {
