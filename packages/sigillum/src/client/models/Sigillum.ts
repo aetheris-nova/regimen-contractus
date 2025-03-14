@@ -26,7 +26,6 @@ import { sigillumAbi as abi } from '@client/abis';
 import type {
   IContractMetadata,
   IDeployOptions,
-  IHasVotedOptions,
   ITokenMetadata,
   ITokenOfResponse,
   IVoteOptions,
@@ -96,10 +95,11 @@ export default class Sigillum {
         throw new Error('no contract address found');
       }
 
-      debug &&
+      if (debug) {
         logger.debug(
           `${Sigillum.name}#${__function}: deployed contract using "${getAccount(wagmiConfig).address}" with transaction hash "${hash}" on chain "${getChainId(wagmiConfig) ?? '-'}"`
         );
+      }
 
       return new Class({
         address: receipt.contractAddress,
